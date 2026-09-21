@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPIC IM 최종 실전 마스터 PRO (9월 10일 20시 시험 완벽 대비)</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #3730a3;
+            --secondary: #7c3aed;
+            --accent: #06b6d4;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 15px rgba(0,0,0,0.07);
+            --shadow-lg: 0 10px 30px rgba(79, 70, 229, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.7;
+            padding-bottom: 60px;
+        }
+
+        /* Top Header */
+        header {
+            background: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #7c3aed 100%);
+            color: white;
+            padding: 40px 20px 30px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.25);
+            position: relative;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 2.3em;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .header-sub {
+            font-size: 1.1em;
+            opacity: 0.95;
+            max-width: 880px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        .header-tags {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header-tag {
+            background: rgba(0,0,0,0.22);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.88em;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        /* Nav Tabs Bar (Sticky) */
+        .nav-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            gap: 8px;
+            padding: 10px 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .main-tab-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.98em;
+            font-weight: 700;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .main-tab-btn:hover {
+            color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .main-tab-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Content Layout */
+        .container {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.35s ease-in-out;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card Elements */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.45em;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #eef2ff;
+            padding-bottom: 12px;
+        }
+
+        /* Alert Banners */
+        .alert {
+            padding: 18px 22px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+            border-left: 5px solid;
+            font-size: 0.98em;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #1e40af;
+        }
+
+        .alert-success {
+            background: var(--success-bg);
+            border-color: var(--success);
+            color: #065f46;
+        }
+
+        .alert-warning {
+            background: var(--warning-bg);
+            border-color: var(--warning);
+            color: #92400e;
+        }
+
+        .alert-danger {
+            background: var(--danger-bg);
+            border-color: var(--danger);
+            color: #991b1b;
+        }
+
+        .alert-funny {
+            background: #fff7ed;
+            border-color: #ea580c;
+            color: #9a3412;
+        }
+
+        .alert strong {
+            font-weight: 700;
+        }
+
+        /* Grid utilities */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        /* Rule Badge List */
+        .rule-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+            border-left: 5px solid var(--primary);
+        }
+
+        .rule-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-sm);
+            background: white;
+        }
+
+        .rule-num {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+            font-size: 0.85em;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-right: 8px;
+        }
+
+        .rule-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+        }
+
+        .rule-body {
+            font-size: 0.95em;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .rule-ex-bad {
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-decoration: line-through;
+            font-family: monospace;
+        }
+
+        .rule-ex-good {
+            color: #166534;
+            background: #dcfce7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        /* Weapon/Cheat-sheet Cards */
+        .weapon-box {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border: 2px solid #fdba74;
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .weapon-title {
+            font-size: 1.3em;
+            font-weight: 800;
+            color: #c2410c;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .weapon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .weapon-item {
+            background: white;
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid #fed7aa;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .weapon-phrase {
+            font-family: 'Consolas', monospace;
+            font-size: 1.1em;
+            font-weight: 800;
+            color: #ea580c;
+        }
+
+        .weapon-meaning {
+            font-size: 0.88em;
+            color: #7c2d12;
+            margin-top: 4px;
+        }
+
+        /* Timeline for D-Day */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+            border-left: 3px solid #c7d2fe;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -38px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .timeline-time {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 1.05em;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+        }
+
+        .timeline-content strong {
+            color: var(--primary-dark);
+        }
+
+        /* Script Box */
+        .script-box {
+            background: #fdfefe;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 16px 0;
+            border-left: 5px solid var(--primary);
+        }
+
+        .script-box .mp {
+            background: #fef08a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .script-box .filler {
+            color: #d97706;
+            font-weight: 600;
+        }
+
+        .script-box .emotion {
+            color: #db2777;
+            font-weight: 600;
+        }
+
+        /* Subtabs (Inside Tab 3) */
+        .subtabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .subtab-btn {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .subtab-btn.active, .subtab-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .subtab-content {
+            display: none;
+        }
+
+        .subtab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Practice Tool Layout (Tab 4) */
+        .practice-layout {
+            display: grid;
+            grid-template-columns: 370px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .practice-sidebar {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            position: sticky;
+            top: 80px;
+            max-height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .filter-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .q-list {
+            list-style: none;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 4px;
+        }
+
+        .q-item {
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            background: #f8fafc;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+
+        .q-item:hover {
+            background: #eef2ff;
+            border-left-color: var(--primary-light);
+        }
+
+        .q-item.active {
+            background: #e0e7ff;
+            border-color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .q-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8em;
+            margin-bottom: 4px;
+        }
+
+        .q-item-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .q-item-title {
+            font-size: 0.92em;
+            line-height: 1.4;
+            color: var(--text-main);
+        }
+
+        /* Practice Main Content */
+        .practice-main {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+
+        .q-hero {
+            background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
+            border: 2px solid #c7d2fe;
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .q-hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-type {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+
+        .badge-time {
+            background: #fff3cd;
+            color: #856404;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+
+        .btn-tts {
+            background: white;
+            border: 1px solid #c7d2fe;
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-tts:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .q-text-en {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--primary-dark);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .q-text-ko {
+            font-size: 0.95em;
+            color: var(--text-muted);
+        }
+
+        /* Voice Recorder Controls */
+        .recorder-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .controls-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .btn-record {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 30px;
+            font-size: 1.05em;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            transition: all 0.25s;
+        }
+
+        .btn-record:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-record.recording {
+            background: #ef4444;
+            animation: pulseRecord 1.2s infinite;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        @keyframes pulseRecord {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        .btn-ctrl {
+            background: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 12px 22px;
+            border-radius: 25px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-ctrl:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .btn-ctrl-danger {
+            color: #ef4444;
+            border-color: #fca5a5;
+        }
+
+        .btn-ctrl-danger:hover {
+            background: #fef2f2;
+        }
+
+        .btn-copy {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .timer-display {
+            font-family: 'Consolas', monospace;
+            font-size: 1.6em;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+            display: inline-block;
+            background: white;
+            padding: 4px 20px;
+            border-radius: 20px;
+            border: 1px solid #c7d2fe;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            transition: width 0.3s ease;
+        }
+
+        .status-msg {
+            font-size: 0.95em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-msg.recording { color: #ef4444; }
+        .status-msg.ready { color: #10b981; }
+
+        /* Audio Player container */
+        .audio-player-box {
+            margin-top: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .audio-player-box audio {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        /* Tips & Model Answer Accordion */
+        .tips-box {
+            background: #ecfdf5;
+            border: 2px solid #a7f3d0;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tips-title {
+            color: #065f46;
+            font-size: 1.15em;
+            font-weight: 800;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #047857;
+        }
+
+        .model-answer-wrapper {
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .model-header {
+            padding: 16px 20px;
+            background: #dcfce7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .model-title {
+            font-size: 1.1em;
+            font-weight: 800;
+            color: #166534;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .model-body {
+            padding: 20px;
+            background: white;
+            display: none;
+            line-height: 1.9;
+            font-size: 1.05em;
+            color: #1f2937;
+        }
+
+        .model-body.open {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .model-note {
+            margin-top: 15px;
+            padding: 12px 16px;
+            background: #fefce8;
+            border-left: 4px solid #eab308;
+            border-radius: 4px;
+            font-size: 0.88em;
+            color: #713f12;
+        }
+
+        /* Checklist styling (Tab 5) */
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .check-item:hover {
+            background: #f1f5f9;
+        }
+
+        .check-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .check-item.completed {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+            text-decoration: line-through;
+            color: #64748b;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.95em;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .practice-layout {
+                grid-template-columns: 1fr;
+            }
+            .practice-sidebar {
+                position: relative;
+                top: 0;
+                max-height: 400px;
+            }
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-badge">🎯 9월 10일 오후 8시 시험 완벽 대비 | OPIc IM1~IM2 2일 초단기 완성</div>
+        <h1>🎤 OPIC IM 최종 실전 마스터 PRO</h1>
+        <p class="header-sub">
+            "완벽한 영어는 필요 없다! <strong>MP 직행 1문장</strong> + <strong>침묵 0초 필러</strong> + <strong>똥/방구 만능 치트키</strong>로 1분 만에 끝낸다."
+        </p>
+        <div class="header-tags">
+            <span class="header-tag">⏰ 9월 10일 (20시 시험) 시간대별 D-Day 가이드</span>
+            <span class="header-tag">⚡ 핵심 원칙 & ONE THING ONLY</span>
+            <span class="header-tag">💩 만능 화장실/배탈 비상 무기 탑재</span>
+            <span class="header-tag">🎙️ 22개 실전 기출 1분 녹음기 & TTS</span>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-wrapper">
+        <div class="nav-container">
+            <button class="main-tab-btn active" onclick="switchMainTab('tab-strategy')">
+                <span>📊 1. 오픽 공식 프로세스 & 출제 공식</span>
+            </button>
+            <button class="main-tab-btn" onclick="switchMainTab('tab-rules')">
+                <span>🧠 2. 핵심 원칙 & 암기 표현 & 똥/방구 치트키</span>
+            </button>
+            <button class="main-tab-btn" onclick="switchMainTab('tab-categories')">
+                <span>📚 3. 화제별 암기 표현 및 4대 유형별 템플릿</span>
+            </button>
+            <button class="main-tab-btn" onclick="switchMainTab('tab-practice')">
+                <span>🎤 4. 실전 모의 연습 도구 (22문항)</span>
+            </button>
+            <button class="main-tab-btn" onclick="switchMainTab('tab-dday')">
+                <span>📅 5. 9월 10일 D-Day 타임라인 (20시 시험)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container">
+
+        <!-- ================= TAB 1: 오픽 공식 프로세스 & 출제 공식 ================= -->
+        <div id="tab-strategy" class="tab-pane active">
+            
+            <div class="card">
+                <div class="card-title">🏛️ OPIc 공식 주관사 시험 진행 프로세스 (멀티캠퍼스 외국어연구소)</div>
+                <div class="grid-2">
+                    <div style="background:#f8fafc; padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+                        <h4 style="color:var(--primary); margin-bottom:12px;">🕒 시험 진행 2단계 구조 (총 60분)</h4>
+                        <ul style="list-style:none; padding-left:0; line-height:2.1;">
+                            <li><strong>1. 오리엔테이션 (20분):</strong> Background Survey 선택, Self Assessment (난이도 선택), 화면/헤드셋/마이크 음량 테스트, 연습 문제 청취</li>
+                            <li><strong>2. 본시험 (40분):</strong>
+                                <ul style="padding-left:20px; color:#475569;">
+                                    <li><strong>1st Session:</strong> 약 7문항 출제 (자기소개 + 콤보 2세트)</li>
+                                    <li><strong>난이도 재조정:</strong> '비슷한 난이도 유지' 선택 추천!</li>
+                                    <li><strong>2nd Session:</strong> 약 7~8문항 출제 (롤플레이 + 콤보 1세트 + 어드밴스)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="background:#f8fafc; padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+                        <h4 style="color:var(--primary); margin-bottom:12px;">🎯 ACTFL 공인 IM 등급 평가 기준</h4>
+                        <div class="alert alert-success" style="margin-bottom:10px;">
+                            <strong>IM(Intermediate Mid) 공식 정의:</strong><br>
+                            "일상적인 소재뿐 아니라 개인적으로 익숙한 상황에서 <strong>문장을 나열하며 자연스럽게 말할 수 있는 수준</strong>. 상대방이 조금만 배려해주면 대화가 지속 가능한 상태."
+                        </div>
+                        <p style="font-size:0.92em; color:#475569; line-height:1.6;">
+                            ✓ 어려운 문법이나 어휘 필요 없음!<br>
+                            ✓ 동사 시제와 주어 일치, 끊김 없는 발화 흐름(Fluency)이 가장 중요!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🎧 질문 2번 청취(Replay) 200% 활용 전략 (감점 0%)</div>
+                <div class="alert alert-info">
+                    OPIc은 질문을 <strong>2번까지 무료로 청취</strong>할 수 있으며, 2번 듣는다고 해서 <strong>성적에 전혀 불이익이나 감점이 없습니다!</strong> 반드시 2번 다 활용하세요!
+                </div>
+
+                <div class="grid-2">
+                    <div style="background:#f8fafc; border:2px solid #c7d2fe; border-radius:var(--radius-sm); padding:20px;">
+                        <h4 style="color:var(--primary); margin-bottom:8px;">1️⃣ 첫 번째 들을 때 (탐색)</h4>
+                        <p style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">
+                            "대충 뭘 물어보는 거지? + 어떤 카테고리인가?"
+                        </p>
+                        <p style="font-size:0.9em; color:#64748b;">
+                            • 세부 사항을 다 받아적으려 하지 마세요.<br>
+                            • 질문의 핵심 키워드와 유형(묘사 / 습관 / 과거경험 / 비교 / 롤플)만 딱 짚어냅니다.
+                        </p>
+                    </div>
+
+                    <div style="background:#f8fafc; border:2px solid #86efac; border-radius:var(--radius-sm); padding:20px;">
+                        <h4 style="color:#166534; margin-bottom:8px;">2️⃣ 두 번째 들을 때 (전략 수립)</h4>
+                        <p style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">
+                            "해당 카테고리의 전략 생각하기!"
+                        </p>
+                        <p style="font-size:0.9em; color:#64748b;">
+                            • Past experience인 경우: MP 생각하다보면 생각 → direct quotation 바로 준비!<br>
+                            • 질문 이해 못하고 카테고리도 모르면 그냥 답변 하지 않기(스킵)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">💡 국룰 서베이 12선 & 15문제 콤보 알고리즘</div>
+                <div class="grid-2">
+                    <div>
+                        <h4 style="color:var(--primary); margin-bottom:10px;">📋 필수 서베이 체크리스트</h4>
+                        <ul style="list-style:none; padding-left:0; line-height:2.0; font-size:0.95em;">
+                            <li>1. 💼 <strong>직업:</strong> 일 경험 없음 (비즈니스 질문 100% 차단)</li>
+                            <li>2. 🎓 <strong>학생:</strong> 아니오 (수업 등록 후 5년 이상 지남)</li>
+                            <li>3. 🏠 <strong>거주지:</strong> 독신자로서 개인 주택이나 아파트에 거주</li>
+                            <li>4. 🎬 <strong>여가 (5개):</strong> 영화보기, 콘서트보기, 공연보기, 공원가기, 쇼핑하기</li>
+                            <li>5. 🎧 <strong>취미 (1개):</strong> 음악 감상하기</li>
+                            <li>6. 🏃 <strong>운동 (3개):</strong> 걷기, 조깅, 신체운동을 즐기지 않음</li>
+                            <li>7. ✈️ <strong>휴가 (3개):</strong> 국내여행, 해외여행, 집에서 보내는 휴가</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 style="color:var(--primary); margin-bottom:10px;">⚡ 15문제 콤보 출제 구성표</h4>
+                        <div style="background:#f1f5f9; padding:15px; border-radius:var(--radius-sm); font-size:0.92em; line-height:1.8;">
+                            • <strong>Q1:</strong> 필수 자기소개<br>
+                            • <strong>Q2 ~ Q4 (콤보 1):</strong> 서베이 주제 (집 묘사 / 루틴 / 과거경험)<br>
+                            • <strong>Q5 ~ Q7 (콤보 2):</strong> 서베이 or 돌발 (음악 / 공원 / 영화 / 쇼핑)<br>
+                            • <strong>Q8 ~ Q10 (콤보 3):</strong> 돌발 주제 (재활용 / 은행 / 날씨 / 교통수단)<br>
+                            • <strong>Q11 ~ Q13 (롤플레이 3콤보):</strong> 11번(질문 3~4개) → 12번(취소/대안 제시) → 13번(과거 유사 경험)<br>
+                            • <strong>Q14 ~ Q15 (어드밴스):</strong> 사회 이슈/트렌드 비교 (기본 MP만 말해도 IM 달성)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= TAB 2: 핵심 원칙 & 암기 표현 & 똥/방구 치트키 ================= -->
+        <div id="tab-rules" class="tab-pane">
+            
+            <div class="card">
+                <div class="card-title">🧠 시험장에서 목숨 걸고 지켜야 할 핵심 원칙 & 필수 암기 표현</div>
+                
+                <div class="rule-card">
+                    <span class="rule-num">원칙 1</span>
+                    <span class="rule-title">Never ask Ava a question (에바에게 직접 질문하지 마라)</span>
+                    <div class="rule-body">
+                        시험관인 에바에게 질문을 던지는 것은 부자연스럽습니다. 수사 의문문만 허용됩니다.<br>
+                        • <span class="rule-ex-bad">Do you like movies, Ava?</span> ❌<br>
+                        • <span class="rule-ex-good">you know what I'm saying? / isn't it?</span> ⭕
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <span class="rule-num">원칙 2</span>
+                    <span class="rule-title">Do not use difficult words (어려운 단어 절대 금지!)</span>
+                    <div class="rule-body">
+                        자신 없는 고급 어휘를 쓰려다 버벅거리는 순간 망합니다. 중학생 수준의 가장 익숙하고 쉬운 단어만 사용하세요.
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <span class="rule-num">원칙 3</span>
+                    <span class="rule-title">Try not to repeat the same word in the same sentence</span>
+                    <div class="rule-body">
+                        한 문장 안에서 같은 단어를 두 번 연속 쓰지 마세요. 대명사(it, they, them)나 다른 쉬운 말로 대체하세요.
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <span class="rule-num">원칙 4</span>
+                    <span class="rule-title">Don't use 2 descriptive/feeling words with 'and'</span>
+                    <div class="rule-body">
+                        형용사 2개를 'and'로 이어붙이면 외운 문장처럼 들립니다. 반드시 호흡을 나누어 필러를 넣으세요!<br>
+                        • <span class="rule-ex-bad">My room is comfy and cozy.</span> ❌<br>
+                        • <span class="rule-ex-good">My room is just so, you know, comfy. I mean, it's just so cozy.</span> ⭕
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <span class="rule-num">원칙 5</span>
+                    <span class="rule-title">Talk about ONE THING and ONE THING ONLY! (딴소리 0%!)</span>
+                    <div class="rule-body">
+                        방 좁다는 얘기하다가 "집 근처에 공주대학교가 있다" 같은 관련 없는 내용을 말하면 감점입니다. 질문에 여러 개를 물어봐도 <strong>단 하나에만 올인</strong>하고 나머지는 1%만 말하거나 버리세요! <strong>답변은 1분 컷!</strong>
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <span class="rule-num">원칙 6</span>
+                    <span class="rule-title">If you get nervous and have nothing to say, GO RIGHT TO THE CONCLUSION!</span>
+                    <div class="rule-body">
+                        말문이 막히고 할 말이 떨어지면 억지로 늘리지 말고 바로 결론 문장으로 넘어가 끝내세요.<br>
+                        <span class="rule-ex-good">"That's why I really love it. I can't explain it!"</span>
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <span class="rule-num">원칙 7</span>
+                    <span class="rule-title">Make honest excuses LATER, NOT in the beginning!</span>
+                    <div class="rule-body">
+                        "술집 언제 갔냐?" 질문에 "사실 나 술 안 마시는데... 기억 안 나는데..."를 먼저 말하지 마세요. 바로 MP를 때리고, 변명은 맨 나중에 붙이세요.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 화제별 구분된 암기 필러 및 표현 모음 -->
+            <div class="card">
+                <div class="card-title">💬 화제별 필수 암기 필러 및 패턴 표현 모음</div>
+                
+                <div style="margin-bottom:20px;">
+                    <h4 style="color:var(--primary); margin-bottom:8px;">🏠 Description (묘사) 전용 암기 표현</h4>
+                    <div class="script-box" style="margin-top:5px;">
+                        <p>• <strong>What I really love about ~ is ~</strong> (내가 ~에서 정말 좋아하는 것은 ~이다)</p>
+                        <p>• <strong>My home isn't all that big, but you know, it's not all that small either.</strong> (우리 집이 그렇게 크진 않지만, 그렇다고 아주 작지도 않아요)</p>
+                        <p>• <strong>I find it quite boring / interesting.</strong> (나는 그것이 꽤 지루하다고/흥미롭다고 느껴)</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <h4 style="color:var(--primary); margin-bottom:8px;">🔄 Habit (습관/루틴) 전용 암기 표현</h4>
+                    <div class="script-box" style="margin-top:5px;">
+                        <p>• <strong>No matter what, whenever I ~, I always make sure to ~</strong> (무슨 일이 있어도, 내가 ~할 때마다 나는 항상 꼭 ~한다)</p>
+                        <p>• <strong>This is crucial / very important because ~</strong> (이것이 매우 중요한 이유는 ~이기 때문이다)</p>
+                        <p>• <strong>I just can't explain it!</strong> (말로는 설명할 수가 없어!)</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <h4 style="color:var(--primary); margin-bottom:8px;">⏰ Past Experience (과거 경험) 전용 암기 표현</h4>
+                    <div class="script-box" style="margin-top:5px;">
+                        <p>• <strong>I remember this one time when ~ / The other day, I was ~</strong> (언제 한번 이런 적이 기억나요 / 일전에 나는 ~했었지)</p>
+                        <p>• <strong>I was like, "..."</strong> (내가 이랬지, "...") -> 직접화법 필수!</p>
+                        <p>• <strong>That's why I could never forget that moment.</strong> (그것이 내가 그 순간을 절대 잊지 못하는 이유야)</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <h4 style="color:var(--primary); margin-bottom:8px;">🔀 Comparison (비교) 전용 암기 표현</h4>
+                    <div class="script-box" style="margin-top:5px;">
+                        <p>• <strong>What I really find interesting about ~ these days is ~</strong> (요즘 ~에 대해 내가 정말 흥미롭게 느끼는 점은 ~이다)</p>
+                        <p>• <strong>In the past, ~ but now, it's a completely different story.</strong> (과거에는 ~였지만, 지금은 완전히 다른 이야기야)</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="color:var(--primary); margin-bottom:8px;">🌟 만능 필러 및 회피 구문 (모든 화제 공통)</h4>
+                    <div class="script-box" style="margin-top:5px;">
+                        <p>• <strong>Alright, well...</strong> (OK 대신 시작할 때 쓰는 원어민 표현)</p>
+                        <p>• <strong>You know / You see</strong> (중간중간 숨 고르기 필러)</p>
+                        <p>• <strong>I guess you can say that ~</strong> (내 생각을 자연스럽게 덧붙일 때)</p>
+                        <p>• <strong>Whether I like it or not, I have no choice but to ~</strong> (좋든 싫든 어쩔 수 없이 ~해야만 해)</p>
+                        <p>• <strong>It makes me feel confident / relaxed.</strong> (~한 기분이 들게 만들어)</p>
+                        <p>• <strong>It helps me to kill time.</strong> (시간 때우는 데 최고야)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 비상 탈출 무기: 똥/방구 응급 사건 치트키 -->
+            <div class="weapon-box">
+                <div class="weapon-title">
+                    <span>💩🔥 [비상 탈출 만능 무기] 똥 & 방구 응급 사건 치트키 (암기 필수)</span>
+                </div>
+                <p style="color:#7c2d12; margin-bottom:15px; font-size:0.95em;">
+                    과거 경험(Past Experience)이나 롤플레이 13번(문제 해결 경험)에서 어떤 장소(해변, 공원, 자전거, 대중교통, 카페)가 나와도 그대로 가져다 쓸 수 있는 치트키 문장들입니다!
+                </p>
+
+                <div class="weapon-grid">
+                    <div class="weapon-item">
+                        <div class="weapon-phrase">let it rip / let one rip</div>
+                        <div class="weapon-meaning">방구를 뀌다 (너무 세게 뀌어서 찢어질 듯)<br>-> I needed to let it rip in front of my wife at the beach!</div>
+                    </div>
+                    <div class="weapon-item">
+                        <div class="weapon-phrase">cut cheese</div>
+                        <div class="weapon-meaning">방구 뀌다<br>-> I cut cheese in the restaurant, and it was silent, but deadly.</div>
+                    </div>
+                    <div class="weapon-item">
+                        <div class="weapon-phrase">thunder from down under</div>
+                        <div class="weapon-meaning">아래에서 천둥이 치다 (방구 마려움)<br>-> I felt a little thunder from down under at the bar.</div>
+                    </div>
+                    <div class="weapon-item">
+                        <div class="weapon-phrase">take a dump / deuce it</div>
+                        <div class="weapon-meaning">똥 싸다 (대변)<br>-> I felt like taking a dump / I had to deuce it during the meeting.</div>
+                    </div>
+                    <div class="weapon-item">
+                        <div class="weapon-phrase">turtlehead</div>
+                        <div class="weapon-meaning">똥이 나오기 직전의 초비상 상황!<br>-> OMG, I was experiencing turtlehead!</div>
+                    </div>
+                    <div class="weapon-item">
+                        <div class="weapon-phrase">unload my beast</div>
+                        <div class="weapon-meaning">화장실에서 볼일 시원하게 보다<br>-> I rushed into Starbucks and unloaded my beast!</div>
+                    </div>
+                    <div class="weapon-item">
+                        <div class="weapon-phrase">as clear as day</div>
+                        <div class="weapon-meaning">너무나 선명하게 (소리가 쩌렁쩌렁)<br>-> It was as clear as day!</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= TAB 3: 화제별 암기 표현 및 4대 유형별 템플릿 ================= -->
+        <div id="tab-categories" class="tab-pane">
+            
+            <div class="card">
+                <div class="card-title">📚 화제별 섹션 구분 및 4대 카테고리별 1분 답변 템플릿</div>
+
+                <!-- Subtabs -->
+                <div class="subtabs">
+                    <button class="subtab-btn active" onclick="switchSubTab('sub-desc')">📝 1. Description (묘사)</button>
+                    <button class="subtab-btn" onclick="switchSubTab('sub-habit')">🔄 2. Habit (습관/루틴)</button>
+                    <button class="subtab-btn" onclick="switchSubTab('sub-past')">⏰ 3. Past Experience (과거경험)</button>
+                    <button class="subtab-btn" onclick="switchSubTab('sub-comp')">🔀 4. Comparison (비교)</button>
+                    <button class="subtab-btn" onclick="switchSubTab('sub-rp')">🎭 5. Role-Play (11~13번)</button>
+                </div>
+
+                <!-- SUBTAB: Description -->
+                <div id="sub-desc" class="subtab-content active">
+                    <h3 style="color:var(--primary); margin-bottom:10px;">📝 Description (묘사 화제) - 섹션별 암기 템플릿</h3>
+                    <div class="alert alert-info">
+                        <strong>핵심 구조:</strong> MP(현재형) ➔ 감정 및 세부 설명 ➔ 결론
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="script-box">
+                            <strong style="color:var(--primary);">🏠 집(Home / Apartment) 화제</strong>
+                            <p><span class="mp">You know, I gotta say, what I really love about my home is my storage room.</span></p>
+                            <p>My home isn't all that big, but <span class="filler">you see</span>, it's not all that small either. But what I love most is the storage. <span class="emotion">It's just so, you know, spacious. I mean, it's just so cozy.</span></p>
+                            <p>None of the size really matters cos I love how big my storage room is. <strong>That's why I love my home so much.</strong></p>
+                        </div>
+
+                        <div class="script-box">
+                            <strong style="color:var(--primary);">👗 패션(Fashion) 화제</strong>
+                            <p><span class="mp">You know, I gotta say, what I really hate about fashion here in Korea is that people tend to only wear safe colors.</span></p>
+                            <p><span class="filler">I guess you can say</span>, <span class="emotion">I find it quite boring.</span></p>
+                            <p><span class="filler">You see</span>, for me, I try to be as colorful as possible whenever I go out. <span class="filler">I guess you can say that</span> I just like to stand out. <strong>That's pretty much my style.</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB: Habit -->
+                <div id="sub-habit" class="subtab-content">
+                    <h3 style="color:var(--primary); margin-bottom:10px;">🔄 Habit (습관/루틴 화제) - 섹션별 암기 템플릿</h3>
+                    <div class="alert alert-info">
+                        <strong>핵심 구조:</strong> 행동 MP ➔ 중요성 ➔ 프리스타일(효과) ➔ 빠른 비교(과거➔현재) ➔ 결론
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="script-box">
+                            <strong style="color:var(--primary);">🚇 교통수단(Transportation) 화제</strong>
+                            <p><span class="mp">No matter what, whenever I need to go somewhere, I always take the subway.</span> This is crucial because it's super reliable.</p>
+                            <p>I love how I can read something on my phone. It's the only time I actually read! <span class="filler">You see</span>, in the past, I never did that, so commuting was boring. But now, it helps me kill time so well. <strong>I just can't explain it! That's why I always take the subway.</strong></p>
+                        </div>
+
+                        <div class="script-box">
+                            <strong style="color:var(--primary);">♻️ 재활용(Recycling) 화제</strong>
+                            <p><span class="mp">Every time I need to recycle, I always check to see that all cans and plastic bottles are crushed to save space.</span></p>
+                            <p>This is very important. I'm quite lazy, so I take out the recycling only when my bins are full to the max. In the past, I had to recycle nearly every day. But now with my crushing method, I recycle once every 2 weeks! <strong>I just can't explain it! That's why I crush everything now.</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB: Past -->
+                <div id="sub-past" class="subtab-content">
+                    <h3 style="color:var(--primary); margin-bottom:10px;">⏰ Past Experience (과거 경험 화제) - 섹션별 암기 템플릿</h3>
+                    <div class="alert alert-info">
+                        <strong>핵심 구조:</strong> 사건 투척 ➔ 직접화법(Direct Quotation) ➔ 생생한 감정 ➔ 결론
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="script-box" style="border-left-color:#ea580c;">
+                            <strong style="color:#c2410c;">🏖️ 해변 방구 썰 (Let it rip!)</strong>
+                            <p><span class="mp">Well, alright, let me tell you about a problem of me letting it rip at the beach!</span> It was one of the most embarrassing things I ever had to go through.</p>
+                            <p>We were finding a nice spot, and as I was bending over to pick up my towel, <span class="filler">you know</span>, something came out! <span class="emotion">It was so loud, as clear as day!</span> My friend was laughing so hard, and I was just so embarrassed. But we both laughed so much. <strong>That's why I could never forget that moment.</strong></p>
+                        </div>
+
+                        <div class="script-box" style="border-left-color:#ea580c;">
+                            <strong style="color:#c2410c;">🚲 자전거 똥 썰 (Turtlehead & Starbucks)</strong>
+                            <p><span class="mp">Alright, well, the other day, I was riding my bike in the park, and all of a sudden, I felt like I needed to take a dump!</span></p>
+                            <p>There was no washroom nearby. I was riding very slowly, kind of standing up, if you know what I mean! <span class="emotion">I was experiencing turtlehead, a total emergency!</span> But luckily, I found a Starbucks. Oh, thank goodness for Starbucks. I rushed in and unloaded my beast. After that, I felt so relieved!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB: Comparison -->
+                <div id="sub-comp" class="subtab-content">
+                    <h3 style="color:var(--primary); margin-bottom:10px;">🔀 Comparison (비교 화제) - 섹션별 암기 템플릿</h3>
+                    <div class="alert alert-info">
+                        <strong>핵심 구조:</strong> Pure Present MP ➔ 현재 설명 ➔ 과거 비교 ➔ 현재 재강조 ➔ 결론
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="script-box">
+                            <strong style="color:var(--primary);">💡 조명 기술 비교</strong>
+                            <p><span class="mp">What I really find interesting about homes these days is that their lighting technology is just phenomenal.</span></p>
+                            <p>New homes now have lighting systems where you can adjust brightness. <span class="filler">But you see</span>, homes before didn't have interesting lighting at all. You couldn't even dim the lights. But now, it's a completely different story. <strong>That's why I appreciate modern lighting.</strong></p>
+                        </div>
+
+                        <div class="script-box">
+                            <strong style="color:var(--primary);">🛒 쇼핑 습관 비교</strong>
+                            <p><span class="mp">Online shopping has completely transformed how people shop in Korea these days.</span> We have services like Coupang that deliver products within hours.</p>
+                            <p><span class="filler">In the past</span>, people had to physically visit offline stores, which was time-consuming. But now, everything arrives at my door with a few taps. <strong>That's why I mostly buy online now.</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB: Role-Play -->
+                <div id="sub-rp" class="subtab-content">
+                    <h3 style="color:var(--primary); margin-bottom:10px;">🎭 Role-Play (11번 ~ 13번) 실전 공략</h3>
+                    <div class="alert alert-info">
+                        <strong>11번:</strong> 질문 3~4개 (Could you ~, Is it possible to ~, What kind of ~)<br>
+                        <strong>12번:</strong> 취소/대안 (Something unexpected came up + 사과 + 대안 2개)<br>
+                        <strong>13번:</strong> 과거 유사 경험 (똥/방구 썰 재활용!)
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="script-box">
+                            <strong style="color:var(--primary);">11번 만능 질문 세트</strong>
+                            <p>• "Could you tell me how much it costs?"</p>
+                            <p>• "What are your business hours?"</p>
+                            <p>• "What kind of clothes should I bring?"</p>
+                            <p>• "Is parking available there?"</p>
+                        </div>
+
+                        <div class="script-box">
+                            <strong style="color:var(--primary);">12번 만능 취소/대안 세트</strong>
+                            <p>• "Hi, I'm calling because something unexpected came up, so I need to cancel my appointment."</p>
+                            <p>• "I'm so sorry about this."</p>
+                            <p>• "Is it possible to reschedule it to next week?"</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= TAB 4: 실전 모의 연습 도구 (22문항) ================= -->
+        <div id="tab-practice" class="tab-pane">
+            
+            <div class="practice-layout">
+                <!-- Sidebar Question List -->
+                <div class="practice-sidebar">
+                    <h3 style="font-size: 1.1em; font-weight: 800; color: var(--primary-dark); margin-bottom: 12px;">📋 실전 기출 22문항</h3>
+                    <div class="filter-tags">
+                        <button class="filter-btn active" onclick="filterQuestions('all')">전체</button>
+                        <button class="filter-btn" onclick="filterQuestions('서베이')">서베이</button>
+                        <button class="filter-btn" onclick="filterQuestions('돌발')">돌발</button>
+                        <button class="filter-btn" onclick="filterQuestions('롤플')">롤플레이</button>
+                    </div>
+                    <ul class="q-list" id="questionListContainer">
+                        <!-- JS로 동적 생성 -->
+                    </ul>
+                </div>
+
+                <!-- Main Practice Area -->
+                <div class="practice-main" id="practiceMainContainer">
+                    <!-- JS로 동적 렌더링 -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= TAB 5: 9월 10일 D-Day 타임라인 ================= -->
+        <div id="tab-dday" class="tab-pane">
+            
+            <div class="card">
+                <div class="card-title">📅 9월 10일 (오후 8시 시험) 시간대별 D-Day 압축 생존 전략</div>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">
+                    시험 당일 컨디션 조절부터 입실 직전까지 1분 1초를 효율적으로 사용하는 최종 타임라인입니다. 체크리스트를 누르며 점검하세요!
+                </p>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-time">오전 09:00 ~ 12:00 (기상 및 뇌 예열)</div>
+                        <div class="timeline-content">
+                            <strong>가볍게 입풀기:</strong> 소리 내어 방구 썰(Let it rip)과 대중교통 루틴 스크립트를 2번씩 읽으며 혀를 풀기. 굳이 무리해서 새로운 걸 외우려 하지 말고 암기 표현 복습하기.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-time">오후 02:00 ~ 05:00 (실전 감각 극대화)</div>
+                        <div class="timeline-content">
+                            <strong>Tab 4 실전 모의 연습 도구 활용:</strong> 무작위로 5문제를 골라 실제 시험처럼 1분 타이머를 켜두고 답변 녹음해보기. 내 목소리를 들으며 필러(You know, alright)가 잘 들어갔는지 체크!
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-time">오후 06:00 (이동 및 마인드 컨트롤)</div>
+                        <div class="timeline-content">
+                            <strong>시험장으로 출발:</strong> 이어폰을 꽂고 머릿속으로 MP 직행 문장과 10대 절대 법칙 되새기기. "완벽한 문법보다 당당한 태도와 필러가 점수를 준다!" 되뇌기.
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-time">오후 07:30 (시험장 도착 & 오리엔테이션)</div>
+                        <div class="timeline-content">
+                            <strong>입실 및 세팅:</strong> 헤드셋 마이크 테스트 시 목소리를 크게 내어 마이크 감도 확실히 잡기. 백그라운드 서베이(집, 영화, 음악, 공원, 쇼핑 등) 설정 실수 없이 정확히 체크하기!
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-time">오후 08:00 ~ 09:00 (본시험 실전 돌입)</div>
+                        <div class="timeline-content">
+                            <strong>실전 전투 시작:</strong> 질문 나오면 무조건 2번 듣기(Replay). 카테고리 파악 후 1초 만에 MP 직행! 막히면 쿨하게 똥/방구 썰 투척하거나 바로 결론으로 탈출하기!
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.2em; font-weight: 800; color: var(--primary-dark); margin: 30px 0 15px;">✅ 시험장 입실 전 최종 체크리스트</h3>
+                <div id="checklistContainer">
+                    <div class="check-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <span>서베이 12선(독신자 집, 영화, 음악, 공원, 쇼핑 등) 완벽 숙지했는가?</span>
+                    </div>
+                    <div class="check-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <span>질문 2번 듣기(Replay)와 '비슷한 난이도 유지' 선택을 기억했는가?</span>
+                    </div>
+                    <div class="check-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <span>딴소리 금지! ONE THING ONLY와 1분 컷 공식을 체화했는가?</span>
+                    </div>
+                    <div class="check-item" onclick="toggleCheck(this)">
+                        <input type="checkbox">
+                        <span>비상 탈출용 똥/방구 썰(Let it rip, Turtlehead) 대사가 머릿속에 장전되어 있는가?</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">클립보드에 복사되었습니다!</div>
+
+    <!-- JavaScript 로직 -->
+    <script>
+        // 22개 실전 기출 데이터베이스 (PDF 1, 2, 4 완벽 반영)
+        const questionsData = [
+            { id: 1, type: "서베이", title: "자기소개 (Self Introduction)", en: "Let me know something about yourself.", ko: "간단한 자기소개를 해주세요.", tip: "이름, 전공, 하루 일과를 자연스럽게 연결하고 'It helps me to ~' 또는 'I feel like ~' 패턴을 섞어주세요.", model: "Alright, well, let me introduce myself. I'm living in an apartment alone these days. What I really love about my daily life is taking a walk in the park. It helps me to clear my mind. I guess you can say that I'm a simple person. That's pretty much about me." },
+            { id: 2, type: "서베이", title: "집 묘사 (Home Description)", en: "What does your home look like? Describe your home in detail.", ko: "당신의 집은 어떤 모습인가요? 자세히 묘사해주세요.", tip: "house 대신 apartment 또는 home 사용! 수납공간(storage room) 하나만 잡고 넓다고(spacious) 1분 동안 밀어붙이세요.", model: "You know, I gotta say, what I really love about my home is my storage room. My home isn't all that big, but you see, it's not all that small either. But what I love most is the storage. It's just so, you know, spacious. I mean, it's just so cozy. None of the size really matters cos I love how big my storage room is. That's why I love my home so much." },
+            { id: 3, type: "서베이", title: "집안일 루틴 (Chore Routine)", en: "What kind of chores do you usually do at home? Tell me about your routine.", ko: "집에서 주로 어떤 집안일을 하나요? 루틴을 말해주세요.", tip: "재활용(Recycling)을 골라 캔과 플라스틱을 찌그러뜨리는 행동(crushed to save space)으로 루틴을 설명하세요.", model: "Every time I need to recycle, I always check to see that all cans and plastic bottles are crushed to save space. This is very important. I'm quite lazy, so I take out the recycling only when my bins are full to the max. In the past, I had to recycle nearly every day. But now with my crushing method, I recycle once every 2 weeks! I just can't explain it! That's why I crush everything now." },
+            { id: 4, type: "서베이", title: "집에서의 과거 기억 (Past Experience at Home)", en: "Tell me about a memorable event or problem that happened at your home in the past.", ko: "과거 집에 있었던 기억에 남는 사건이나 문제를 말해주세요.", tip: "집이나 방 안에서 겪었던 웃긴 에피소드나 방구 썰(Let it rip)을 살짝 변형해서 적용하세요.", model: "Well, alright, let me tell you about a funny problem at home. The other day, I was cleaning my room, and all of a sudden, I had to cut cheese! It was silent, but deadly. My roommate walked in right at that moment and started laughing so hard. I was just so embarrassed. That's why I could never forget that moment." },
+            { id: 5, type: "서베이", title: "공원 가기 루틴 (Park Habit)", en: "How often do you go to the park? What do you usually do there?", ko: "공원에 얼마나 자주 가며, 주로 거기서 무엇을 하나요?", tip: "No matter what으로 시작하여 공원에서 걷거나 조용히 음악을 듣는 루틴을 설명하세요.", model: "No matter what, whenever I visit the park, I always make sure to take a long walk. This is crucial because it helps me to recharge my energy. I love how I can escape from busy city life. You see, in the past, I rarely went to parks, but now, it's my favorite routine. That's why I go there every weekend." },
+            { id: 6, type: "서베이", title: "공원에서의 과거 경험 (Park Past Experience)", en: "Tell me about a memorable experience you had at a park.", ko: "공원에서 겪었던 기억에 남는 경험을 말해주세요.", tip: "공원 산책 중 갑자기 배가 아팠던 비상 상황(Turtlehead)을 대입하면 완벽합니다!", model: "Alright, well, the other day, I was walking in the park, and all of a sudden, I felt like I needed to take a dump! There was no washroom nearby. I was walking very slowly, kind of standing up, if you know what I mean! I was experiencing turtlehead, a total emergency! But luckily, I found a public restroom just in time. After that, I felt so relieved!" },
+            { id: 7, type: "서베이", title: "음악 감상 루틴 (Music Listening Habit)", en: "What kind of music do you usually listen to? When and where do you listen to it?", ko: "주로 어떤 음악을 듣나요? 언제 어디서 주로 듣나요?", tip: "No matter what, whenever I commute, I always put on my earphones to listen to upbeat pop music.", model: "No matter what, whenever I'm on the move, I always make sure to listen to music with my earphones. This is crucial because it helps me to kill time. I love how it makes me feel relaxed. In the past, I didn't care about music much, but now, I can't live without it. That's why music is a big part of my life." },
+            { id: 8, type: "서베이", title: "영화 관람 경험 (Movie Experience)", en: "When was the last time you watched a movie? Where did you go and what did you do?", ko: "영화관에 마지막으로 간 것이 언제인가요? 어디서 무엇을 했나요?", tip: "최근에 영화관에 가서 예매하고 팝콘을 먹으며 즐겼던 경험을 간단한 구조로 설명하세요.", model: "Well, the other day, I went to the theater with my friend to watch an action movie. What I really loved about it was the massive screen and sound system. We bought some popcorn and drinks, and enjoyed the show. It was so relaxing. That's why I love going to the movies." },
+            { id: 9, type: "서베이", title: "쇼핑 습관 (Shopping Habit)", en: "Where do you usually go shopping? What kind of items do you buy?", ko: "주로 어디서 쇼핑을 하며 어떤 물건을 사나요?", tip: "쿠팡이나 온라인 쇼핑몰을 언급하며 빠르고 편리하다는 점을 강조하세요.", model: "No matter what, whenever I need something, I always use online shopping apps like Coupang. This is crucial because delivery is super fast. I love how I don't have to visit offline stores. It saves me so much time. That's why online shopping is my favorite." },
+            { id: 10, type: "돌발", title: "교통수단 이용 습관 (Transportation Habit)", en: "What is your favorite transportation? How do you use it?", ko: "가장 좋아하는 교통수단은 무엇이며 어떻게 이용하나요?", tip: "지하철(Subway)을 골라 신뢰성과 독서 루틴을 엮어주세요.", model: "No matter what, whenever I need to go somewhere, I always take the subway. This is crucial because it's super reliable. I love how I can read something on my phone. It's the only time I actually read! You see, in the past, I never did that, but now, it helps me kill time so well. I just can't explain it!" },
+            { id: 11, type: "돌발", title: "은행 업무 루틴 (Bank Habit)", en: "How often do you visit a bank? What do you do when you are there?", ko: "은행에 얼마나 자주 가며 거기서 주로 무엇을 하나요?", tip: "요즘은 앱을 쓰지만 가끔 창구에 갈 때 에어팟을 낀다는 스토리로 전개하세요.", model: "No matter what, whenever I actually visit the bank, I always make sure to bring my Airpods. This is crucial because the waiting time can be quite long. I love how listening to music helps me kill time. In the past, waiting at the bank was so boring, but now, I don't mind it at all." },
+            { id: 12, type: "돌발", title: "재활용 문제 해결 (Recycling Issue)", en: "How do people in your country handle recycling? What do you do personally?", ko: "당신 나라 사람들은 재활용을 어떻게 하나요? 개인적으로 어떻게 하나요?", tip: "Tab 2의 재활용 찌그러뜨리기 루틴 스크립트를 그대로 출력하세요.", model: "Every time I need to recycle, I always check to see that all cans and plastic bottles are crushed to save space. This is very important. I'm quite lazy, so I take out the recycling only when my bins are full to the max. In the past, I had to recycle nearly every day. But now with my crushing method, I recycle once every 2 weeks! That's why I crush everything now." },
+            { id: 13, type: "돌발", title: "날씨와 관련된 과거 경험 (Weather Past Experience)", en: "Tell me about a time when your plan was ruined by unexpected bad weather.", ko: "예상치 못한 나쁜 날씨 때문에 계획이 망쳤던 경험을 말해주세요.", tip: "해변 여행 중 날씨가 흐려지고 바람이 불 때 방구를 뀌었던 전설의 썰(Let it rip)을 사용하세요!", model: "Well, alright, let me tell you about a problem of me letting it rip at the beach because of bad weather! We were in Spain, finding a nice spot, and as I was bending over, you know, something came out! It was so loud, as clear as day! My wife was laughing so hard, and I was just so embarrassed. That's why I could never forget that moment." },
+            { id: 14, type: "돌발", title: "건강 관리 루틴 (Health Routine)", en: "What do you do to stay healthy? Tell me about your routine.", ko: "건강을 유지하기 위해 어떤 것을 하나요? 루틴을 말해주세요.", tip: "격렬한 운동 대신 가벼운 산책이나 충분한 수면을 취하는 루틴을 말하세요.", model: "No matter what, whenever I have free time, I always make sure to get enough sleep. This is crucial because it helps me to recharge. I love how I feel so refreshed the next morning. In the past, I stayed up late all the time, but now, I try to maintain a healthy sleep schedule. That's why I feel much better these days." },
+            { id: 15, type: "롤플", title: "호텔 예약 및 날씨 문의 (Hotel & Weather RP)", en: "You are going on a trip. Call a hotel, ask 3-4 questions about the weather and what to bring.", ko: "여행을 갈 예정입니다. 호텔에 전화해 현지 날씨와 챙겨야 할 옷에 대해 3~4가지 질문을 하세요.", tip: "11번 롤플레이 공식 활용: 비용, 영업시간, 날씨 및 복장 문의하기", model: "Hi, I'm calling to make a reservation at your hotel. I have a few questions. First, could you tell me what the weather is like right now? Second, what kind of clothes should I bring for the trip? Lastly, is parking available at the hotel? Thank you so much!" },
+            { id: 16, type: "롤플", title: "옷가게 문제 상황 및 대안 제안 (Wrong Clothing RP)", en: "You bought clothing at a store, but found out there is a problem. Call the store, explain the situation, and make arrangements.", ko: "가게에서 옷을 샀는데 문제가 생겼습니다. 가게에 전화해 상황을 설명하고 대안을 조율하세요.", tip: "12번 롤플레이 공식 활용: 잘못 샀거나 문제가 생겼으니 사과하고 교환/방문 일정 조율하기", model: "Hi, I'm calling because I bought a jacket at your store yesterday, but I found out there's a problem with the zipper. Something unexpected came up so I can't visit today. Is it possible to visit this weekend to exchange it? I'm so sorry for the inconvenience." },
+            { id: 17, type: "롤플", title: "날씨 관련 과거 문제 경험 (Weather Problem Past Exp)", en: "Tell me about a time when you had an unexpected problem related to the weather or clothing.", ko: "날씨나 옷차림과 관련하여 예상치 못한 문제를 겪었던 경험을 말해주세요.", tip: "13번 문항: 날씨/옷 주제와 연결된 똥/방구 썰이나 야외 돌발 상황 썰 풀기!", model: "Alright, well, let me tell you about a time when I had a funny problem. I was wearing a brand new pair of tight jeans, and I went out to meet my friends. But all of a sudden, I felt like I needed to take a dump! Because my pants were so tight, it was a total emergency. I had to run to a nearby cafe. After unloading my beast, I felt so relieved!" },
+            { id: 18, type: "돌발", title: "음식점 경험 (Restaurant Experience)", en: "What kind of restaurants do you usually go to? Describe a memorable restaurant.", ko: "주로 어떤 식당에 가나요? 기억에 남는 식당을 묘사해주세요.", tip: "동네 분식집이나 카페를 골라 분위기와 좋아하는 메뉴를 심플하게 묘사하세요.", model: "You know, I gotta say, what I really love about my favorite restaurant is its cozy atmosphere. It's a small pasta place near my home. I find it quite relaxing. Whenever I go there, I always order tomato pasta. The taste is just phenomenal. That's why I always recommend it to my friends." },
+            { id: 19, type: "돌발", title: "재활용 비교 (Recycling Comparison)", en: "How has recycling changed compared to the past in your country?", ko: "과거와 비교했을 때 당신 나라의 재활용 방식은 어떻게 달라졌나요?", tip: "과거에는 그냥 버렸지만 요즘은 분리수거함이 체계화되었다는 비교 템플릿 사용.", model: "What I really find interesting about recycling these days is that collection systems are much more systematic. In the past, people didn't really separate plastics and paper carefully. But now, everything is sorted out clearly. That's why our environment is getting better." },
+            { id: 20, type: "어드밴스", title: "기술 변화 비교 (Tech Change Comparison)", en: "How have technological changes affected your daily life compared to the past?", ko: "기술의 변화가 과거와 비교하여 당신의 일상에 어떤 영향을 주었나요?", tip: "스마트폰과 AI 등 기술 발달로 배달, 쇼핑, 소통이 엄청나게 편해졌다고 답변.", model: "What I really find interesting about technology these days is how convenient everything is. In the past, we had to do everything offline, which took so much time. But now, with smartphones, we can order food and shop instantly. That's why modern life is completely different." },
+            { id: 21, type: "어드밴스", title: "사회 이슈 / 트렌드 (Social Issue)", en: "What is a major issue or trend among young people in your country these days?", ko: "요즘 당신 나라 젊은이들 사이의 주요 이슈나 트렌드는 무엇인가요?", tip: "가성비, 효율성, 그리고 온라인 콘텐츠 소비 트렌드를 심플하게 짚어주기.", model: "What I really notice about young people these days is that they value convenience and efficiency above everything else. They prefer online services rather than visiting offline stores. I guess you can say that digital lifestyle is the biggest trend now." },
+            { id: 22, type: "어드밴스", title: "집에서 휴가 보내기 트렌드 (Staycation Trend)", en: "Why do many people prefer staycation (staying at home for vacation) nowadays?", ko: "요즘 많은 사람들이 집에서 휴가를 보내는(스테이케이션) 이유는 무엇인가요?", tip: "밖은 너무 복잡하고 비용이 많이 드는데 집이 가장 편안한 휴식처이기 때문이라는 점 강조.", model: "What I really find interesting about vacations these days is that more people prefer staying home. In the past, traveling was the only option, but it's exhausting. Staying home helps us truly recharge without stress. That's why staycation is so popular now." }
+        ];
+
+        let currentQuestionId = 1;
+        let activeFilter = 'all';
+
+        // 탭 전환 로직 (Main Tabs)
+        function switchMainTab(tabId) {
+            document.querySelectorAll('.main-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Subtabs 전환 로직 (Tab 3 내외부)
+        function switchSubTab(subId) {
+            const parentCard = event.currentTarget.closest('.card');
+            parentCard.querySelectorAll('.subtab-btn').forEach(btn => btn.classList.remove('active'));
+            parentCard.querySelectorAll('.subtab-content').forEach(content => content.classList.remove('active'));
+
+            event.currentTarget.classList.add('active');
+            document.getElementById(subId).classList.add('active');
+        }
+
+        // 실전 연습 문제 필터링
+        function filterQuestions(type) {
+            activeFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            renderQuestionList();
+        }
+
+        // 문제 리스트 렌더링
+        function renderQuestionList() {
+            const container = document.getElementById('questionListContainer');
+            container.innerHTML = '';
+
+            const filtered = activeFilter === 'all' 
+                ? questionsData 
+                : questionsData.filter(q => q.type === activeFilter);
+
+            filtered.forEach(q => {
+                const li = document.createElement('li');
+                li.className = `q-item ${q.id === currentQuestionId ? 'active' : ''}`;
+                li.onclick = () => selectQuestion(q.id);
+                li.innerHTML = `
+                    <div class="q-item-header">
+                        <span class="q-item-badge">${q.type}</span>
+                        <span>Q.${q.id}</span>
+                    </div>
+                    <div class="q-item-title">${q.title}</div>
+                `;
+                container.appendChild(li);
+            });
+
+            renderQuestionMain(currentQuestionId);
+        }
+
+        // 문제 선택 시 메인 영역 렌더링
+        function selectQuestion(id) {
+            currentQuestionId = id;
+            document.querySelectorAll('.q-item').forEach(item => item.classList.remove('active'));
+            renderQuestionList();
+        }
+
+        function renderQuestionMain(id) {
+            const q = questionsData.find(item => item.id === id);
+            const mainContainer = document.getElementById('practiceMainContainer');
+
+            mainContainer.innerHTML = `
+                <div class="q-hero">
+                    <div class="q-hero-meta">
+                        <span class="badge-type">${q.type} 유형 (Q.${q.id})</span>
+                        <span class="badge-time">권장 답변: 1분 내외</span>
+                        <button class="btn-tts" onclick="speakText('${q.en.replace(/'/g, "\\'")}')">🔊 에바 음성 청취 (TTS)</button>
+                    </div>
+                    <div class="q-text-en">"${q.en}"</div>
+                    <div class="q-text-ko">${q.ko}</div>
+                </div>
+
+                <!-- 음성 녹음기 컴포넌트 -->
+                <div class="recorder-box">
+                    <div class="timer-display" id="timerDisplay">01:00</div>
+                    <div class="controls-group">
+                        <button class="btn-record" id="recordBtn" onclick="toggleRecording()">
+                            <span id="recordIcon">⏺️</span> <span id="recordText">녹음 시작</span>
+                        </button>
+                        <button class="btn-ctrl" onclick="resetRecorder()">🔄 초기화</button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressBarFill"></div>
+                    </div>
+                    <div class="status-msg ready" id="statusMsg">준비됨 (마이크 버튼을 눌러 1분간 연습하세요)</div>
+                    
+                    <div class="audio-player-box" id="audioPlayerBox" style="display:none;">
+                        <p style="font-size:0.9em; font-weight:700; color:var(--primary-dark); margin-bottom:4px;">🎧 내가 녹음한 답변 재생</p>
+                        <audio id="audioPlayback" controls></audio>
+                    </div>
+                </div>
+
+                <!-- 팁 및 모범 답변 -->
+                <div class="tips-box">
+                    <div class="tips-title">💡 실전 공략 팁 (IM1~IM2 핵심)</div>
+                    <div class="tip-item"><span>📌</span> <span>${q.tip}</span></div>
+                </div>
+
+                <div class="model-answer-wrapper">
+                    <div class="model-header" onclick="toggleModelAnswer(this)">
+                        <div class="model-title">
+                            <span>✨ 실전 만능 모범 스크립트 보기 (클릭하여 펼치기)</span>
+                        </div>
+                        <span>▼</span>
+                    </div>
+                    <div class="model-body">
+                        <p>${q.model}</p>
+                        <div class="model-note">
+                            <strong>💡 암기 포인트:</strong> 첫 문장은 반드시 <strong>MP(Main Point)</strong>로 시작하고, 중간에 필러(You know, alright)를 자연스럽게 섞어주세요!
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 모범 답안 토글
+        function toggleModelAnswer(header) {
+            const body = header.nextElementSibling;
+            body.classList.toggle('open');
+            header.querySelector('span:last-child').textContent = body.classList.contains('open') ? '▲' : '▼';
+        }
+
+        // TTS 음성 재생
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("이 브라우저는 음성 재생을 지원하지 않습니다.");
+            }
+        }
+
+        // 녹음기 시뮬레이션 및 실제 MediaRecorder API 연동
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let timerInterval;
+        let timeLeft = 60;
+
+        function toggleRecording() {
+            const recordBtn = document.getElementById('recordBtn');
+            const recordIcon = document.getElementById('recordIcon');
+            const recordText = document.getElementById('recordText');
+            const statusMsg = document.getElementById('statusMsg');
+
+            if (!isRecording) {
+                // 녹음 시작
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+
+                        mediaRecorder.ondataavailable = event => {
+                            audioChunks.push(event.data);
+                        };
+
+                        mediaRecorder.onstop = () => {
+                            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                            const audioUrl = URL.createObjectURL(audioBlob);
+                            const audioPlayback = document.getElementById('audioPlayback');
+                            audioPlayback.src = audioUrl;
+                            document.getElementById('audioPlayerBox').style.display = 'block';
+                        };
+
+                        mediaRecorder.start();
+                        isRecording = true;
+                        recordBtn.classList.add('recording');
+                        recordIcon.textContent = '⏹️';
+                        recordText.textContent = '녹음 중지';
+                        statusMsg.textContent = '🔴 녹음 중... (실제 목소리가 녹음되고 있습니다)';
+                        statusMsg.className = 'status-msg recording';
+
+                        timeLeft = 60;
+                        startTimer();
+                    })
+                    .catch(err => {
+                        alert("마이크 권한을 허용해야 녹음 기능을 사용할 수 있습니다.");
+                    });
+            } else {
+                // 녹음 중지
+                stopRecording();
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                const recordBtn = document.getElementById('recordBtn');
+                recordBtn.classList.remove('recording');
+                document.getElementById('recordIcon').textContent = '⏺️';
+                document.getElementById('recordText').textContent = '녹음 재시작';
+                const statusMsg = document.getElementById('statusMsg');
+                statusMsg.textContent = '녹음 완료! 아래 플레이어에서 확인하세요.';
+                statusMsg.className = 'status-msg ready';
+                clearInterval(timerInterval);
+            }
+        }
+
+        function resetRecorder() {
+            stopRecording();
+            timeLeft = 60;
+            document.getElementById('timerDisplay').textContent = '01:00';
+            document.getElementById('progressBarFill').style.width = '0%';
+            document.getElementById('audioPlayerBox').style.display = 'none';
+            document.getElementById('statusMsg').textContent = '준비됨 (마이크 버튼을 눌러 1분간 연습하세요)';
+            document.getElementById('statusMsg').className = 'status-msg ready';
+            document.getElementById('recordIcon').textContent = '⏺️';
+            document.getElementById('recordText').textContent = '녹음 시작';
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById('timerDisplay').textContent = 
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                
+                let progressPercent = ((60 - timeLeft) / 60) * 100;
+                document.getElementById('progressBarFill').style.width = `${progressPercent}%`;
+
+                if (timeLeft <= 0) {
+                    stopRecording();
+                    document.getElementById('statusMsg').textContent = '⏰ 1분 시간이 종료되었습니다!';
+                }
+            }, 1000);
+        }
+
+        // 체크리스트 토글
+        function toggleCheck(item) {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            item.classList.toggle('completed', checkbox.checked);
+        }
+
+        // 초기 실행
+        window.onload = function() {
+            renderQuestionList();
+        };
+    </script>
+</body>
+</html>

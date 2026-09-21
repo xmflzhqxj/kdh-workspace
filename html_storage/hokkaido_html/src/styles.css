@@ -1,0 +1,101 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-glow: var(--primary-glow);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-display: "Pretendard", "Inter", "Noto Sans KR", system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.5rem;
+
+  --background: #f6f5fb;
+  --foreground: #33334b;
+
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+
+  --primary: #7a77b9;
+  --primary-foreground: #ffffff;
+  --primary-glow: #9f9add;
+
+  --secondary: #f2f1fb;
+  --secondary-foreground: #575482;
+
+  --muted: #f4f4f7;
+  --muted-foreground: #76758a;
+
+  --accent: #ebecfa;
+  --accent-foreground: #56528f;
+
+  --destructive: #d95d6a;
+  --destructive-foreground: #ffffff;
+
+  --border: #e5e3f0;
+  --input: #dedbec;
+  --ring: #9f9add;
+
+  --gradient-primary: linear-gradient(135deg, #7a77b9 0%, #9f9add 100%);
+  --gradient-hero: linear-gradient(180deg, #ffffff 0%, #ebecfa 100%);
+  --shadow-glow: 0 10px 28px -16px rgb(122 119 185 / 0.72);
+  --shadow-card: 0 12px 30px -24px rgb(72 69 107 / 0.55);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  iframe {
+    display: block;
+  }
+}

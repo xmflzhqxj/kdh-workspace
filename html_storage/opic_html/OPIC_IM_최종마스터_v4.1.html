@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPIC IM 최종 마스터 v4.1</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #3730a3;
+            --secondary: #7c3aed;
+            --accent: #06b6d4;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #7c3aed 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.25);
+        }
+
+        h1 {
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 12px 20px;
+            border-bottom: 2px solid var(--border);
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .tab-btn.active {
+            color: white;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #eef2ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 토글식 암기 카드 */
+        .flip-card {
+            background: white;
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flip-card:hover {
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .flip-card.korean {
+            background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 100%);
+            border-color: var(--accent);
+        }
+
+        .flip-card.english {
+            background: linear-gradient(135deg, #f0fdf4 0%, #f5feff 100%);
+            border-color: var(--success);
+        }
+
+        .flip-text {
+            font-size: 1.05em;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .flip-card.korean .flip-text {
+            color: var(--primary-dark);
+        }
+
+        .flip-card.english .flip-text {
+            color: var(--success);
+            font-family: 'Consolas', monospace;
+            font-size: 0.95em;
+        }
+
+        .flip-hint {
+            font-size: 0.75em;
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* MP 마스터하기 스타일 */
+        .mp-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .mp-title {
+            font-weight: 800;
+            color: #92400e;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .mp-content {
+            color: #78350f;
+            line-height: 1.8;
+            font-size: 0.93em;
+        }
+
+        /* 질문 컨트롤 스타일 */
+        .control-strategy {
+            background: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%);
+            border-left: 5px solid var(--secondary);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .control-title {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 12px;
+            font-size: 1em;
+        }
+
+        .control-text {
+            color: var(--text-main);
+            line-height: 1.8;
+            font-size: 0.95em;
+        }
+
+        .example-box {
+            background: white;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--primary);
+        }
+
+        /* 필러 표현 스타일 */
+        .filler-group {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .filler-category {
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.05em;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eef2ff;
+        }
+
+        .filler-item {
+            background: #f8fafc;
+            border-left: 3px solid var(--accent);
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filler-korean {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.93em;
+            flex: 1;
+        }
+
+        .filler-english {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-left: 15px;
+            min-width: 200px;
+            text-align: right;
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.9em;
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .tab-btn {
+                padding: 6px 10px;
+                font-size: 0.7em;
+            }
+
+            .filler-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filler-english {
+                margin-left: 0;
+                margin-top: 10px;
+                min-width: auto;
+                text-align: left;
+                width: 100%;
+            }
+
+            .flip-text {
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎯 OPIC IM 최종 마스터 v4.1</h1>
+        <p style="font-size: 0.95em; opacity: 0.9;">모든 표현 완전 추가 - 토글식 암기 완벽 구성</p>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('intro')">📌 자기소개</button>
+        <button class="tab-btn" onclick="switchTab('structure')">🏗️ 답변 구조</button>
+        <button class="tab-btn" onclick="switchTab('mp-master')">⭐ MP 마스터</button>
+        <button class="tab-btn" onclick="switchTab('control')">🎯 질문 컨트롤</button>
+        <button class="tab-btn" onclick="switchTab('fillers')">💫 필러/연결</button>
+        <button class="tab-btn" onclick="switchTab('memory')">🧠 토글식 암기</button>
+        <button class="tab-btn" onclick="switchTab('expressions')">💬 전체 표현</button>
+        <button class="tab-btn" onclick="switchTab('qna')">❓ 실전 Q&A</button>
+    </div>
+
+    <div class="container">
+        <!-- 1. 자기소개 -->
+        <div id="intro" class="tab-pane active">
+            <div class="card">
+                <div class="card-title">📌 고정 자기소개</div>
+                <div style="background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 100%); border: 2px solid var(--accent); padding: 25px; border-radius: 12px; text-align: center; font-size: 1.1em; font-weight: 700; line-height: 1.8;">
+                    Hi, I'm Donghyun. I'm very excited to take this test. Let's get started.
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 답변 구조 -->
+        <div id="structure" class="tab-pane">
+            <div class="card">
+                <div class="card-title">🏗️ 4가지 답변 구조</div>
+                
+                <div class="mp-box">
+                    <div class="mp-title">1️⃣ DESCRIPTION (설명형)</div>
+                    <div class="mp-content">
+                        <p><strong>MP</strong> - 2줄: "...is all about..." / "I think ... is very important"</p>
+                        <p>↓</p>
+                        <p><strong>감정/의견</strong> - 2줄: 개인적인 생각</p>
+                        <p>↓</p>
+                        <p><strong>결론</strong> - 1줄: "That's why..."</p>
+                    </div>
+                </div>
+
+                <div class="mp-box">
+                    <div class="mp-title">2️⃣ PAST EXPERIENCE (경험형)</div>
+                    <div class="mp-content">
+                        <p><strong>구체적 경험</strong> - 2줄: 언제/어디서/누구와 (과거시제)</p>
+                        <p>↓</p>
+                        <p><strong>당시 감정</strong> - 2줄: 느낀 감정 (과거시제)</p>
+                        <p>↓</p>
+                        <p><strong>배운 점</strong> - 1줄: 교훈</p>
+                    </div>
+                </div>
+
+                <div class="mp-box">
+                    <div class="mp-title">3️⃣ HABIT (습관형)</div>
+                    <div class="mp-content">
+                        <p><strong>1단계:</strong> "No matter what" / "Whenever I" + 습관</p>
+                        <p><strong>2단계:</strong> "This is crucial" / "It's very rare"</p>
+                        <p><strong>3-4단계:</strong> 프리스타일</p>
+                        <p><strong>5-6단계:</strong> "It's interesting because..." (과거 비교)</p>
+                    </div>
+                </div>
+
+                <div class="mp-box">
+                    <div class="mp-title">4️⃣ OPINION/PREDICTION (의견/예측형)</div>
+                    <div class="mp-content">
+                        <p><strong>1단계:</strong> "I think..." / "I believe..."</p>
+                        <p><strong>2단계:</strong> 근거/이유</p>
+                        <p><strong>3단계:</strong> 구체적 예시</p>
+                        <p><strong>4단계:</strong> "That's why..." / "Because of that..."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. MP 마스터하기 -->
+        <div id="mp-master" class="tab-pane">
+            <div class="card">
+                <div class="card-title">⭐ MP 마스터하기 - 첫 번째 단계</div>
+
+                <div style="background: #fef2f2; border: 2px solid var(--danger); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <div style="font-weight: 800; color: var(--danger); margin-bottom: 10px; font-size: 1.05em;">🎯 MP 마스터의 중요성</div>
+                    <div style="color: #7f1d1d; line-height: 1.8;">
+                        <p>• 질문을 들으면 <strong>바로 MP가 나와야 함</strong></p>
+                        <p>• MP는 한 문장이라도 괜찮음 (단, 명확해야 함)</p>
+                        <p>• MP를 빨리 생각하고 <strong>바로 뱉을 수 있게</strong> 훈련</p>
+                        <p>• <strong>10개 질문을 바로 MP로 답할 수 있을 때까지</strong> 반복</p>
+                        <p>• MP 마스터 후에 나머지 전략(감정, 결론 등) 추가</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div style="font-size: 1.15em; font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #eef2ff;">📝 MP 구조</div>
+                    
+                    <div class="mp-box">
+                        <div class="mp-title">가장 기본적인 MP 패턴</div>
+                        <div class="mp-content">
+                            <p><strong style="color: #92400e;">"...is all about..."</strong></p>
+                            <p>예) Technology is all about convenience</p>
+                        </div>
+                    </div>
+
+                    <div class="mp-box">
+                        <div class="mp-title">MP 패턴 2</div>
+                        <div class="mp-content">
+                            <p><strong style="color: #92400e;">"I think... is very important because..."</strong></p>
+                            <p>예) I think teamwork is very important because it makes things better</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 질문 컨트롤하기 -->
+        <div id="control" class="tab-pane">
+            <div class="card">
+                <div class="card-title">🎯 질문 컨트롤하기 - 두 번째 단계</div>
+
+                <div style="background: #f0fdf4; border: 2px solid var(--success); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <div style="font-weight: 800; color: var(--success); margin-bottom: 10px; font-size: 1.05em;">💡 질문 컨트롤의 원리</div>
+                    <div style="color: #065f46; line-height: 1.8;">
+                        <p>• General (범위 넓은) 질문을 Single (좁은) 질문으로 변환</p>
+                        <p>• 필러로 시간을 버면서 MP를 생각</p>
+                        <p>• 20초 안에 답변 시작을 못하면 바로 MP로 진입</p>
+                        <p>• 내가 말하고 싶은 주제로 끌어가기</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div style="font-size: 1.15em; font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #eef2ff;">📊 General → Single 변환</div>
+
+                    <div class="control-strategy">
+                        <div class="control-title">전략 1: "Wow, what a question" 사용</div>
+                        <div class="control-text">
+                            <p style="margin-bottom: 10px;"><strong>일반 질문:</strong> "Tell me about industries"</p>
+                            <p style="margin-bottom: 10px;"><strong>내 답변:</strong> "Wow, what a question, well, I follow a lot of industries but you know what? Let's talk about the food industry."</p>
+                            <p><strong style="color: var(--secondary);">→ 이제 내가 원하는 주제(food industry)로 MP 시작!</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 필러/연결 표현 -->
+        <div id="fillers" class="tab-pane">
+            <div class="card">
+                <div class="card-title">💫 필러/연결 표현</div>
+
+                <div class="category-filter">
+                    <button class="filter-btn active" onclick="filterFillers('all')">전체</button>
+                    <button class="filter-btn" onclick="filterFillers('start')">시작</button>
+                    <button class="filter-btn" onclick="filterFillers('time')">시간 버는</button>
+                    <button class="filter-btn" onclick="filterFillers('connection')">연결</button>
+                    <button class="filter-btn" onclick="filterFillers('emphasis')">강조</button>
+                    <button class="filter-btn" onclick="filterFillers('filler')">필러</button>
+                </div>
+
+                <div id="fillersContainer"></div>
+            </div>
+        </div>
+
+        <!-- 6. 토글식 암기 -->
+        <div id="memory" class="tab-pane">
+            <div class="card">
+                <div class="card-title">🧠 토글식 암기 - 클릭해서 보기/숨기기</div>
+
+                <div class="category-filter">
+                    <button class="filter-btn active" onclick="loadMemoryCards('activity')">활동</button>
+                    <button class="filter-btn" onclick="loadMemoryCards('past')">경험</button>
+                    <button class="filter-btn" onclick="loadMemoryCards('comparison')">비교</button>
+                    <button class="filter-btn" onclick="loadMemoryCards('conclusion')">결론</button>
+                    <button class="filter-btn" onclick="loadMemoryCards('general')">일반</button>
+                    <button class="filter-btn" onclick="loadMemoryCards('roleplay')">Role-play</button>
+                </div>
+
+                <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em; color: var(--primary-dark); font-weight: 600;">
+                    💡 한국어 뜻만 보이는 카드를 클릭하면 영어가 나타났다 다시 사라집니다!
+                </div>
+
+                <div id="memoryCardsContainer"></div>
+            </div>
+        </div>
+
+        <!-- 7. 전체 표현 -->
+        <div id="expressions" class="tab-pane">
+            <div class="card">
+                <div class="card-title">💬 모든 표현 한눈에 보기</div>
+                <div style="font-size: 0.9em; color: var(--text-muted); margin-bottom: 20px;">🧠 토글식 암기 모드에서 학습하고 여기서 전체 내용을 확인하세요</div>
+
+                <div style="background: #f8fafc; border-left: 4px solid var(--primary); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; font-size: 1.1em;">🎯 활동/취미 표현 (11개)</div>
+                    <div id="allActivityExpressions"></div>
+                </div>
+
+                <div style="background: #f8fafc; border-left: 4px solid var(--secondary); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; font-size: 1.1em;">📝 경험 표현 (11개)</div>
+                    <div id="allPastExpressions"></div>
+                </div>
+
+                <div style="background: #f8fafc; border-left: 4px solid var(--accent); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; font-size: 1.1em;">🔄 비교 표현 (4개)</div>
+                    <div id="allComparisonExpressions"></div>
+                </div>
+
+                <div style="background: #f8fafc; border-left: 4px solid var(--success); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; font-size: 1.1em;">✨ 결론 표현 (4개)</div>
+                    <div id="allConclusionExpressions"></div>
+                </div>
+
+                <div style="background: #f8fafc; border-left: 4px solid #d97706; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; font-size: 1.1em;">🌍 일반/기술 표현 (13개)</div>
+                    <div id="allGeneralExpressions"></div>
+                </div>
+
+                <div style="background: #f8fafc; border-left: 4px solid #ec4899; padding: 20px; border-radius: 8px;">
+                    <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; font-size: 1.1em;">🎤 Role-play 표현 (27개)</div>
+                    <div id="allRoleplayExpressions"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. 실전 Q&A -->
+        <div id="qna" class="tab-pane">
+            <div class="card">
+                <div class="card-title">❓ 실전 예시 Q&A</div>
+
+                <div style="background: #f0f9ff; border: 2px solid var(--accent); padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+                    <div style="font-weight: 800; color: var(--accent); font-size: 1.1em; margin-bottom: 15px;">🏖️ Q1: Beach Trip</div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <div style="font-weight: 700; color: var(--text-main); margin-bottom: 10px;">상황:</div>
+                        <div style="font-size: 0.95em; line-height: 1.8; color: var(--text-main);">
+                            스페인 비치에서 아내 앞에서 예상치 못하게 방구를 뀜 (let it rip)
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f0f9ff; border: 2px solid var(--accent); padding: 25px; border-radius: 12px;">
+                    <div style="font-weight: 800; color: var(--accent); font-size: 1.1em; margin-bottom: 15px;">🚴 Q2: Bike Transportation</div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <div style="font-weight: 700; color: var(--text-main); margin-bottom: 10px;">상황:</div>
+                        <div style="font-size: 0.95em; line-height: 1.8; color: var(--text-main);">
+                            자전거를 타다가 갑자기 화장실이 급해짐 (take a dump) - 근처에 화장실이 없음 (turtlehead) - 스타벅스 발견해 해결
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>🎯 OPIC IM 최종 마스터 v4.1 | 모든 표현 완전 추가</p>
+        <p style="margin-top: 10px; font-size: 0.85em;">총 70개 이상의 표현 암기 + 완벽한 학습 전략</p>
+    </footer>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (tabName === 'fillers') renderFillers('all');
+            if (tabName === 'memory') loadMemoryCards('activity');
+            if (tabName === 'expressions') renderAllExpressions();
+        }
+
+        const fillersData = {
+            start: [
+                { korean: '오, 정말 좋은 질문이네요', english: 'Wow, what a question' },
+                { korean: '글쎄, 생각을 해보니까', english: 'Well, you know' },
+                { korean: '흠, 그거는 흥미로운데', english: 'Hmm, that\'s interesting' },
+                { korean: '그건 좋은 질문이야', english: 'That\'s a good question' }
+            ],
+            time: [
+                { korean: '한 번 생각해 봅시다', english: 'Let me think about that for a moment' },
+                { korean: '음, 내가 생각해보니까', english: 'Well, let me see' },
+                { korean: '그것에 대해 생각해 보니까', english: 'If I think about that' },
+                { korean: '생각을 정리해 보니까', english: 'As I collect my thoughts' }
+            ],
+            connection: [
+                { korean: '그래서 나는', english: 'So I' },
+                { korean: '그것이 바로 내가', english: 'That\'s how I' },
+                { korean: '그래서 이게', english: 'That\'s why that is' },
+                { korean: '바꿔 말하면', english: 'In other words' },
+                { korean: '전체적으로 봤을 때', english: 'Overall' }
+            ],
+            emphasis: [
+                { korean: '정말로 중요한 것은', english: 'The thing is' },
+                { korean: '가장 중요한 것', english: 'The most important thing' },
+                { korean: '핵심은', english: 'The key is' },
+                { korean: '진짜 말이다', english: 'The truth is' },
+                { korean: '개인적으로', english: 'Personally speaking' }
+            ],
+            filler: [
+                { korean: '그 말은', english: 'I mean' },
+                { korean: '알지만', english: 'You know' },
+                { korean: '그러니까', english: 'So like' },
+                { korean: '아마도', english: 'I guess' },
+                { korean: '같은', english: 'sort of' }
+            ]
+        };
+
+        function renderFillers(category) {
+            const container = document.getElementById('fillersContainer');
+            container.innerHTML = '';
+
+            const data = category === 'all' ? Object.values(fillersData).flat() : fillersData[category];
+
+            data.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'filler-item';
+                div.innerHTML = `
+                    <div class="filler-korean">${item.korean}</div>
+                    <div class="filler-english">${item.english}</div>
+                `;
+                container.appendChild(div);
+            });
+
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // ===== 암기 카드 데이터 (모든 표현) =====
+        const memoryCardsData = {
+            activity: [
+                { korean: '여유 시간에 정말 즐겨한다', english: 'I really enjoy ~~(listening to music) in my free time' },
+                { korean: '가장 좋아하는 활동 중 하나는', english: 'One of my favorite activities is ~~ (watching movies)' },
+                { korean: '보통 여유 시간이 있을 때 한다', english: 'I usually ~~(listen to music) when I have free time' },
+                { korean: '주말에 자주 한다', english: 'I often ~(travel domestically) on weekends' },
+                { korean: '때때로 친구들과 함께 한다', english: 'Sometimes I ~(watch movies) with my friends' },
+                { korean: '대부분 혼자 한다', english: 'Most of the time I ~~(listen to music) alone' },
+                { korean: '특히 좋아하는 이유는 이것이 긴장을 푸는데 도움이 된다', english: 'I especially like ~(listening to music) because it helps me relax' },
+                { korean: '건강을 유지하는 좋은 방법이다', english: 'It\'s a great way to ~(stay healthy)' },
+                { korean: '편안함을 느끼게 한다', english: 'It makes me feel ~(relaxed)' },
+                { korean: '내 집 근처에 좋은 장소가 있다', english: 'There is a great place near my home where I ~(go to a cafe)' },
+                { korean: '내 사는 곳에서 그리 멀지 않은 곳에 위치하고 있다', english: '~(The cafe) is located not far from where I live' }
+            ],
+            past: [
+                { korean: '기억할 만한 경험이 하나 있다 - 부산여행', english: 'I remember one memorable experience when I ~(traveled to Busan)' },
+                { korean: '흥미로운 일이 일어났다 - 제주도 여행', english: 'Something interesting happened when I ~(traveled to Jeju island)' },
+                { korean: '가장 기억에 남는 순간이었다 - 친구들과 여행', english: 'It was one of the most memorable moments when I ~(traveled with my friends)' },
+                { korean: '한때 문제가 있었다 - 해외여행', english: 'However, I once had a problem when I ~(traveled abroad)' },
+                { korean: '예상치 못한 일이 일어났다 - 카페 방문', english: 'Something unexpected happened when I ~(visited a cafe)' },
+                { korean: '경험이 있다 - 호텔 숙박', english: 'I remember an experience related to ~(staying at a hotel)' },
+                { korean: '예상치 못한 일이 발생했다 - 헤어컷', english: 'Something unexpected happened when I experienced ~(a hair-cut)' },
+                { korean: '처음엔 어떻게 다룰지 몰랐다 - 일 문제', english: 'At first, I didn\'t know how to handle ~(the problem at work)' },
+                { korean: '하지만 결국 해결책을 찾았다 - 휴대폰 문제', english: 'But eventually, I found a solution for ~(the phone problem)' },
+                { korean: '결국 모든 것이 잘 풀렸다 - 일 문제', english: 'In the end, everything worked out well with ~(the work issue)' },
+                { korean: '그 경험으로 배운 점 - 팀워크의 중요성', english: 'Because of that experience, I learned ~(the importance of teamwork)' }
+            ],
+            comparison: [
+                { korean: '과거에 비해 요즘 사람들은 더 많이 한다', english: 'Compared to the past, people ~(listen to music online) much more these days' },
+                { korean: '요즘 더 많은 사람들이 즐긴다', english: 'These days more people enjoy ~(working out)' },
+                { korean: '이전만큼 자주 하지 않는다', english: 'I don\'t ~(watch movies) as often as before' },
+                { korean: '그렇지만 기회가 생기면 여전히 즐긴다', english: 'But I still enjoy ~(traveling) whenever I have the chance' }
+            ],
+            conclusion: [
+                { korean: '그래서 정말 즐긴다', english: 'That\'s why I enjoy ~(listening to music) so much' },
+                { korean: '그래서 내 삶의 중요한 부분이 되었다', english: 'That\'s why ~(working out) has become an important part of my life' },
+                { korean: '전반적으로 정말 즐긴다', english: 'Overall, I really enjoy ~(listening to music)' },
+                { korean: '나에게는 긴장을 푸는 좋은 방법이다', english: 'For me, ~(listening to music) is a great way to relax' }
+            ],
+            general: [
+                { korean: '요즘 사람들은 많이 이야기한다', english: 'These days people talk a lot about ~(technology)' },
+                { korean: '우리 삶에서 매우 중요하다', english: 'I think ~(technology) is very important in our lives' },
+                { korean: '많은 사람들이 일상에서 사용한다', english: 'Many people use ~(technology) in their daily lives' },
+                { korean: '한 가지 장점은 편리함이다', english: 'One advantage of ~(technology) is convenience' },
+                { korean: '하지만 단점도 있다', english: 'However, ~(technology) also has some disadvantages' },
+                { korean: '한 예로는 AI가 있다', english: 'One example of ~(technology) is ~(artificial intelligence)' },
+                { korean: '과거에 비해 많이 변했다', english: 'Compared to the past, ~(technology) has changed a lot' },
+                { korean: '덕분에 우리 삶이 더 편해졌다', english: 'Because of ~(technology), our lives have become more convenient' },
+                { korean: '하지만 일부 사람들은 중독을 걱정한다', english: 'However, some people worry about ~(technology addiction)' },
+                { korean: '미래에 더 흔해질 것이라고 생각한다', english: 'In the future, I think ~(AI technology) will become more common' },
+                { korean: '앞으로 더 많은 사람들이 사용할 가능성이 높다', english: 'More people will probably use ~(AI) in the future' },
+                { korean: '계속 성장할 것이라고 믿는다', english: 'I believe ~(industrial innovation) will continue to grow' },
+                { korean: '현대 사회에서 중요하다', english: 'That\'s why ~(recycling) is important in modern society' }
+            ],
+            roleplay: [
+                { korean: '질문이 있어서 전화했습니다', english: 'Hi, I\'m calling because I have a question about ~(concert tickets)' },
+                { korean: '물어보고 싶습니다', english: 'I\'d like to ask about ~(tour packages)' },
+                { korean: '정보를 주실 수 있을까요', english: 'Could you give me some information about ~(the concert)?' },
+                { korean: '예약을 하고 싶습니다', english: 'I\'d like to make a reservation for ~(concert tickets)' },
+                { korean: '예약을 변경하고 싶습니다', english: 'I\'d like to change my reservation for ~(the hotel)' },
+                { korean: '예약을 취소하고 싶습니다', english: 'I need to cancel my reservation for ~(the tour)' },
+                { korean: '예약을 확인하고 싶습니다', english: 'I\'d like to confirm my reservation for ~(the hotel)' },
+                { korean: '날짜를 변경할 수 있을까요', english: 'Is it possible to change ~(the tour date)?' },
+                { korean: '내일 예약할 수 있을까요', english: 'Could I make a reservation for ~(tickets) tomorrow?' },
+                { korean: '몇 시에 시작하나요', english: 'What time does ~(the event) start?' },
+                { korean: '얼마나 드나요', english: 'How much does ~(the repair) cost?' },
+                { korean: '추천해 주실 곳이 있나요', english: 'Do you have any recommendations for ~(travel destinations?)' },
+                { korean: '어떤 것을 추천하시나요', english: 'Could you recommend ~(a concert)?' },
+                { korean: '초보자용으로 뭘 추천하시나요', english: 'What would you recommend for ~(beginners)?' },
+                { korean: '문제가 있습니다', english: 'I have a problem with ~(my booking)' },
+                { korean: '뭔가 잘못되었습니다', english: 'Something went wrong with ~(my ticket booking)' },
+                { korean: '도와주실 수 있을까요', english: 'Could you help me with ~(my reservation issue)?' },
+                { korean: '어떻게 해야할지 모르겠습니다', english: 'I\'m not sure what to do about ~(my reservation)' },
+                { korean: '세부사항을 설명해주실 수 있을까요', english: 'Could you explain the details of ~(the concert)?' },
+                { korean: '그것은 좋을 것 같습니다', english: 'That sounds good for ~(the tour)' },
+                { korean: '그것은 좋을 것 같습니다', english: 'That would be great for ~(the repair appointment)' },
+                { korean: '정말 감사합니다', english: 'I really appreciate your help with ~(my reservation)' },
+                { korean: '많은 도움이 되었습니다', english: 'That really helped with ~(my ticket issue)' },
+                { korean: '이제 더 잘 이해합니다', english: 'Now I understand ~(the ticket system) better' },
+                { korean: '문제를 해결해서 고마워요', english: 'I\'m glad we solved ~(the booking problem)' },
+                { korean: '감사합니다', english: 'Thanks again for helping with ~(my ticket)' },
+                { korean: '매우 도움이 되었습니다', english: 'That was very helpful for ~(my reservation)' }
+            ]
+        };
+
+        let currentCardIndex = 0;
+        let currentCardCategory = 'activity';
+
+        function loadMemoryCards(category) {
+            const container = document.getElementById('memoryCardsContainer');
+            container.innerHTML = '';
+            currentCardCategory = category;
+            currentCardIndex = 0;
+
+            const cards = memoryCardsData[category] || [];
+            cards.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'flip-card korean';
+                cardDiv.onclick = function() { toggleCard(this); };
+                cardDiv.innerHTML = `
+                    <div class="flip-text">
+                        ${card.korean}
+                        <div class="flip-hint">클릭하여 영어 보기 →</div>
+                    </div>
+                `;
+                container.appendChild(cardDiv);
+            });
+
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function toggleCard(cardElement) {
+            const index = Array.from(cardElement.parentElement.children).indexOf(cardElement);
+            const card = memoryCardsData[currentCardCategory][index];
+
+            if (cardElement.classList.contains('korean')) {
+                cardElement.classList.remove('korean');
+                cardElement.classList.add('english');
+                cardElement.innerHTML = `
+                    <div class="flip-text">
+                        ${card.english}
+                        <div class="flip-hint">← 클릭하여 숨기기</div>
+                    </div>
+                `;
+            } else {
+                cardElement.classList.remove('english');
+                cardElement.classList.add('korean');
+                cardElement.innerHTML = `
+                    <div class="flip-text">
+                        ${card.korean}
+                        <div class="flip-hint">클릭하여 영어 보기 →</div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderAllExpressions() {
+            renderExpressionList('activity', 'allActivityExpressions');
+            renderExpressionList('past', 'allPastExpressions');
+            renderExpressionList('comparison', 'allComparisonExpressions');
+            renderExpressionList('conclusion', 'allConclusionExpressions');
+            renderExpressionList('general', 'allGeneralExpressions');
+            renderExpressionList('roleplay', 'allRoleplayExpressions');
+        }
+
+        function renderExpressionList(category, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+
+            const cards = memoryCardsData[category] || [];
+            cards.forEach(card => {
+                const div = document.createElement('div');
+                div.className = 'filler-item';
+                div.innerHTML = `
+                    <div class="filler-korean">${card.korean}</div>
+                    <div class="filler-english">${card.english}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        window.onload = function() {
+            document.querySelectorAll('.tab-pane')[0].classList.add('active');
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        };
+    </script>
+</body>
+</html>
