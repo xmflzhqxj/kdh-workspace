@@ -289,6 +289,33 @@
         font-size: 0.92em;
     }
 
+    .stt-toolbar, .survey-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .stt-search { flex: 1 1 280px; min-width: 220px; padding: 11px 14px; border: 1px solid var(--border); border-radius: 8px; font: inherit; }
+    .stt-status { color: var(--text-muted); font-size: 0.9em; font-weight: 700; }
+    .stt-group { margin: 24px 0; }
+    .stt-group-title, .survey-topic-title { color: var(--primary-dark); font-size: 1.15em; font-weight: 800; margin-bottom: 10px; }
+    .stt-item { background: #f8fafc; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; }
+    .stt-item:hover, .survey-expression:hover { background: #eff6ff; }
+    .stt-number { display: inline-block; min-width: 30px; color: var(--primary); font-weight: 800; }
+    .stt-meaning, .survey-expression-korean { display: none; color: var(--text-muted); font-size: 0.88em; margin-top: 6px; }
+    .stt-item.revealed .stt-meaning, .survey-expression.revealed .survey-expression-korean { display: block; }
+    .survey-topic { margin-top: 24px; }
+    .survey-type { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; margin: 12px 0; overflow: hidden; }
+    .survey-type-title { padding: 10px 14px; background: #eef2ff; color: var(--primary-dark); font-weight: 800; }
+    .survey-expression { padding: 13px 15px; border-top: 1px solid var(--border); cursor: pointer; }
+    .survey-expression-question { color: #92400e; font-size: 0.86em; font-weight: 700; margin-bottom: 5px; }
+    .survey-expression-english { font-weight: 700; line-height: 1.65; }
+    .survey-question { color: #92400e; background: #fffbeb; border-left: 4px solid var(--warning); padding: 12px 14px; margin-bottom: 18px; }
+    .answer-script { padding: 15px; border-top: 1px solid var(--border); }
+    .answer-script-question { color: #92400e; font-size: 0.9em; font-weight: 800; margin-bottom: 10px; }
+    .answer-script-lines { line-height: 1.75; font-weight: 650; }
+    .answer-script-lines p { margin: 0 0 5px; }
+    .answer-script-meaning { color: var(--text-muted); font-size: 0.9em; margin-top: 10px; }
+    .script-tag { color: var(--primary); font-size: 0.78em; font-weight: 800; margin-bottom: 6px; }
+    .stt-reference { margin: 10px 14px 14px; border-top: 1px dashed var(--border); padding-top: 10px; }
+    .stt-reference summary { color: var(--text-muted); cursor: pointer; font-weight: 700; }
+    .stt-reference .stt-item { margin-top: 8px; }
+
     footer {
         text-align: center;
         padding: 20px;
@@ -317,9 +344,10 @@
 
     <div class="nav-wrapper">
         <div class="nav-container">
-            <button class="main-tab-btn active" onclick="switchTab('patterns')">📖 패턴 + 예문</button>
-            <button class="main-tab-btn" onclick="switchTab('memory')">🧠 토글 암기</button>
-            <button class="main-tab-btn" onclick="switchTab('overview')">📋 전체 한눈에</button>
+            <button class="main-tab-btn active" onclick="switchTab('patterns', this)">📖 패턴 + 예문</button>
+            <button class="main-tab-btn" onclick="switchTab('memory', this)">🧠 토글 암기</button>
+            <button class="main-tab-btn" onclick="switchTab('overview', this)">📋 전체 한눈에</button>
+            <button class="main-tab-btn" onclick="switchTab('survey-memory', this)">📂 서베이 암기 표현</button>
         </div>
     </div>
 
@@ -354,6 +382,22 @@
                 <div id="overviewContainer"></div>
             </div>
         </div>
+
+        <div id="survey-memory" class="tab-pane">
+            <div class="card">
+                <div class="card-title">📂 서베이 암기 표현</div>
+                <noscript><div class="flow-note">이 학습 페이지는 JavaScript 실행이 필요합니다. Google Drive 미리보기나 파일 뷰어에서 열리지 않으면 다운로드한 파일을 Chrome 또는 Safari 브라우저에서 여세요.</div></noscript>
+                <div class="flow-note">각 질문 유형에 맞춰 4~5문장으로 답변하세요: 핵심 묘사 2문장 + 느낌/이유 1~2문장 + 마무리 1문장. 질문 유형에 맞는 스크립트를 골라 연습하고, 원문 STT 문장은 참고 표현으로 접어 두었습니다.</div>
+                <div class="stt-toolbar">
+                    <input id="sttSearch" class="stt-search" type="search" placeholder="영어 문장 검색" oninput="filterSurveySearch(this.value)">
+                    <span id="sttStatus" class="stt-status">148개 STT 참고 문장</span>
+                </div>
+                <div id="surveyTopicFilters" class="survey-toolbar"></div>
+                <div id="surveyTypeFilters" class="survey-toolbar"></div>
+                <div id="surveyQuestionGuide"></div>
+                <div id="surveyExpressionContainer"></div>
+            </div>
+        </div>
     </div>
 
     <footer>
@@ -372,7 +416,9 @@
             { key: 'reschedule', label: '🔄 일정조정/취소' },
             { key: 'confirm', label: '✅ 동의 확인' },
             { key: 'past_experience', label: '🕘 과거 경험(13번)' },
-            { key: 'closing', label: '👋 마무리 인사' }
+            { key: 'closing', label: '👋 마무리 인사' },
+            { key: 'emotions', label: '😊 감정 표현' },
+            { key: 'survey', label: '☀️ 일반 주제(서베이)' }
         ];
 
         const roleplayData = {
@@ -572,17 +618,194 @@
                     },
                     { kr: '사과와 함께 보상을 제안하며 마무리하기', en: "I'm so sorry again. I'll buy you lunch next week.", examples: [{ en: "I'm so sorry again. I'll buy you lunch next week.", ko: '다시 한번 정말 미안해. 다음 주에 점심 살게' }] }
                 ]
+            },
+            emotions: {
+                title: '😊 감정 표현 (행복·감동·놀람·짜증·긴장)',
+                items: [
+                    { kr: '정말 행복했다 (strong expression)', en: 'I was completely over the moon.', examples: [{ en: 'I was completely over the moon.', ko: '정말 기뻤다' }] },
+                    { kr: '일주일 내내 행복했다', en: 'I was on cloud nine for the whole week.', examples: [{ en: 'I was on cloud nine for the whole week.', ko: '일주일 내내 행복했다' }] },
+                    { kr: '기쁘다 (neutral)', en: 'I was really happy.', examples: [{ en: 'I was really happy.', ko: '기쁘다' }, { en: 'I felt so good.', ko: '기분이 정말 좋았다' }] },
+                    { kr: '감동했다', en: 'I was really touched.', examples: [{ en: 'I was really touched.', ko: '정말 감동했다' }, { en: 'I got emotional.', ko: '감정적이 됐다' }] },
+                    { kr: '놀랐다', en: 'I was surprised.', examples: [{ en: 'I was surprised.', ko: '놀랐다' }, { en: 'I was really impressed.', ko: '정말 감탄했다' }] },
+                    { kr: '짜증났다·실망했다', en: 'I was really annoyed.', examples: [{ en: 'I was really annoyed.', ko: '짜증났다' }, { en: 'I was disappointed.', ko: '실망했다' }] },
+                    { kr: '긴장했다·당황했다', en: 'I was really nervous.', examples: [{ en: 'I was really nervous.', ko: '정말 긴장했다' }, { en: 'It was a little weird.', ko: '좀 당황스러웠다' }] }
+                ]
+            },
+            survey: {
+                title: '☀️ 일반 주제 표현 (서베이·주제 발화)',
+                items: [
+                    {
+                        kr: '날씨 - 묘사',
+                        en: 'During the summer, the weather is very hot in my country.',
+                        examples: [
+                            { en: 'During the summer, the weather is very hot in my country.', ko: '여름에는 우리나라 날씨가 매우 덥다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 - 습관',
+                        en: 'During the rainy season, I check the weather forecast.',
+                        examples: [
+                            { en: 'During the rainy season, I check the weather forecast.', ko: '비오는 계절에는 날씨 예보를 확인한다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 - 과거 경험',
+                        en: "During the fall, I once went hiking with my poppy.",
+                        examples: [
+                            { en: "During the fall, I once went hiking with my poppy.", ko: '가을에 한 번 아버지와 등산을 갔다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 - 비교',
+                        en: "But these days, during the summer, it's very humid.",
+                        examples: [
+                            { en: "But these days, during the summer, it's very humid.", ko: '하지만 요즘 여름에는 습도가 높다' }
+                        ]
+                    },
+                    {
+                        kr: '귀찮은 일 - 묘사',
+                        en: 'Carrying an umbrella is a hassle on rainy days.',
+                        examples: [
+                            { en: 'Carrying an umbrella is a hassle on rainy days.', ko: '비오는 날 우산 들고 다니는 건 귀찮다' }
+                        ]
+                    },
+                    {
+                        kr: '귀찮은 일 - 습관',
+                        en: "It's a hassle, but I carry an umbrella.",
+                        examples: [
+                            { en: "It's a hassle, but I carry an umbrella.", ko: '귀찮지만 우산을 들고 다닌다' }
+                        ]
+                    },
+                    {
+                        kr: '귀찮은 일 - 과거 경험',
+                        en: "I once looked for a taxi in the rain. It was a hassle.",
+                        examples: [
+                            { en: "I once looked for a taxi in the rain. It was a hassle.", ko: '한 번 빗속에서 택시를 찾은 적이 있다. 정말 귀찮았다' }
+                        ]
+                    },
+                    {
+                        kr: '귀찮은 일 - 비교',
+                        en: "But these days, it's a hassle to carry an umbrella.",
+                        examples: [
+                            { en: "But these days, it's a hassle to carry an umbrella.", ko: '요즘엔 우산 들고 다니는 게 귀찮다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 예보 - 묘사',
+                        en: 'The weather forecast is very accurate these days.',
+                        examples: [
+                            { en: 'The weather forecast is very accurate these days.', ko: '요즘 날씨 예보가 정확하다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 예보 - 습관',
+                        en: 'I always check the forecast before I go outside.',
+                        examples: [
+                            { en: 'I always check the forecast before I go outside.', ko: '나가기 전에 항상 예보를 확인한다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 예보 - 과거 경험',
+                        en: 'One time the forecast showed rain all week.',
+                        examples: [
+                            { en: 'One time the forecast showed rain all week.', ko: '한 번 예보에 일주일 내내 비가 온다고 나왔다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 예보 - 비교',
+                        en: "But these days, it suddenly rains cats and dogs, right?",
+                        examples: [
+                            { en: "But these days, I check the weather forecast a lot. You know, now a days, it suddenly rains cats and dogs right?", ko: '요즘엔 날씨 예보를 자주 확인한다. 알지, 요즘엔 갑자기 폭우가 오잖아' }
+                        ]
+                    },
+                    {
+                        kr: '눈보라 - 묘사',
+                        en: 'Sometimes we have a blizzard in the winter.',
+                        examples: [
+                            { en: 'Sometimes we have a blizzard in the winter.', ko: '겨울에 가끔 눈보라가 난다' }
+                        ]
+                    },
+                    {
+                        kr: '눈보라 - 습관',
+                        en: 'I stay home when there is a blizzard.',
+                        examples: [
+                            { en: 'I stay home when there is a blizzard.', ko: '눈보라가 오면 집에 있다' }
+                        ]
+                    },
+                    {
+                        kr: '눈보라 - 과거 경험',
+                        en: 'One time a blizzard stopped the buses in my city.',
+                        examples: [
+                            { en: 'One time a blizzard stopped the buses in my city.', ko: '한 번 눈보라 때문에 우리 도시의 버스가 멈췄다' }
+                        ]
+                    },
+                    {
+                        kr: '눈보라 - 비교',
+                        en: "But these days, I see a lot of blizzards because of global warming.",
+                        examples: [
+                            { en: "But these days, I see a lot of blizzards. Because of global warming.", ko: '요즘엔 눈보라를 많이 본다. 지구 온난화 때문이다' }
+                        ]
+                    },
+                    {
+                        kr: '미세먼지 - 묘사',
+                        en: 'Fine dust is a big problem in my country.',
+                        examples: [
+                            { en: 'Fine dust is a big problem in my country.', ko: '미세먼지는 우리나라의 큰 문제다' }
+                        ]
+                    },
+                    {
+                        kr: '미세먼지 - 습관',
+                        en: "I wear a mask when there's a lot of fine dust.",
+                        examples: [
+                            { en: "I wear a mask when there's a lot of fine dust.", ko: '미세먼지가 많을 때 마스크를 쓴다' }
+                        ]
+                    },
+                    {
+                        kr: '미세먼지 - 과거 경험',
+                        en: 'One time I canceled plans because of fine dust.',
+                        examples: [
+                            { en: 'One time I canceled plans because of fine dust.', ko: '한 번 미세먼지 때문에 계획을 취소했다' }
+                        ]
+                    },
+                    {
+                        kr: '미세먼지 - 비교',
+                        en: 'But these days, I wear a mask because of fine dust.',
+                        examples: [
+                            { en: 'But these days, I wear a mask because of fine dust.', ko: '요즘엔 미세먼지 때문에 마스크를 쓴다' }
+                        ]
+                    }
+                ]
             }
         };
+
+        const rawSttSentenceGroups = [
+            `I like my neighborhood because it's a quiet and convenient place to live.|I live in an apartment complex near the downtown area.|Although it's close to downtown, my town is pretty quiet.|I use public transportation to get around.|The only neighbor I talk to is Mr. Lee, who lives upstairs.|We run into each other about once a week.|We usually have a conversation when we both get into the elevator.|Sometimes they meet up with their friends and chat for a while at a coffee shop or go shopping together.|She played it for five straight hours and I couldn't stand it.|I called the building superintendent and complained about it.`,
+            `It is still in good condition.|My mom put some paintings in the living room.|When I first moved into my house, everything was brand new.|First of all, I bought a new refrigerator.|The old one broke down and made a weird sound.|The new one is a lot bigger than the old one, so we can put more stuff inside.|My new bed is really big and takes up a lot of space.|My apartment is small and cozy.|I hope I could get a top floor apartment so that nobody lives above me.|When it gets really cold in Korea, the water pipes can freeze.`,
+            `In my house, there is a huge sofa in the middle of the living room.|When I'm at home, I spend most of my time on the sofa.|In my room, I have a desk, a bed, and a closet.|My closet is pretty big because I share it with my sister.|In the kitchen, there is a big dining table where we have dinner together.|It's a big closet with small drawers, so I store most of my wardrobe in it.|There are so many useful home appliances.|I always use the microwave to heat up my food and drinks.|There are many smaller devices I like, such as the blender and the kettle.|I use the blender every morning to make some apple juice.`,
+            `My favorite actor is Matt Damon.|He actually becomes the character, and it's so believable.|I usually go to the theater in my neighborhood.|It's very big with lots of screenings, so I can always watch a movie whenever I want.|At the theater, I get my tickets from the ticket booth.|I never let my friend talk because it really distracts me.|I check from the internet to see what's recently been released.|I wanted to see the film because I had read quite good compliments on the movie.`,
+            `My best friend Kim and I have the same taste in music.|We usually go for a drink and share our feelings about the concert.|I like to attend the concerts of my favorite singers.|I like musicians who play hip hop and dance music.|I may not be able to see them in person ever again in my life.|I often go to classic concerts like symphony or piano recitals.|Since then, I've become a huge fan of live concerts.|At the concert hall, we saw many Korean musicians came to see Lady Gaga.|She was actually really good at singing and the concert was amazing.|Kim and I were so impressed and I definitely want to go see her again.`,
+            `When you walk through the gate, you can see a lot of trees and lawn.|There is a small pond inside the park.|When I go to the park, I usually take a walk first.|It takes about 15 minutes to walk around the whole park, so I walk a few laps around the park.|We have a nice conversation while walking back home.|I lie down on the grass and read a book.|I want to jog there, but end up just walking.|We found a nice spot to sit and put a blanket on the grass.|We spent the whole afternoon in the park.|When I visited the park that I usually go to, I actually ran into my ex-girlfriend.`,
+            `You can make any kind of fried rice by adding whatever you want.|To make it, you need a bowl of rice, an egg, and any ingredients you want to put in the rice.|Stir-fry them until they look good.|When it's ready, put an egg fried sunny-side on the top and enjoy your dish.|They're easy to make, but the taste isn't guaranteed.|The first time I cooked was when I made dinner for my family.|I decided to make seafood pasta for the main dish.|It was her first time to actually cook besides instant noodles.|She Googled the recipe and bought every ingredient she needed.|When she got home after the delivery, her brother told her how salty her chocolate was.`,
+            `My MP3 player is very small and light, but it contains thousands of songs I like.|I like dance and hip-hop music the most because they cheer me up.|Sometimes I listen to jazz and classical music before I go to bed.|I love his music because he composes great melodies and lyrics.|I just like the way he thinks and expresses himself.|Most of his songs are very popular in Korea.|I was so excited to have a portable music device.|I always carried it with me and I was always listening to music.|I could focus well with some background music.|I don't need a companion to jog because I just like running and listening to music.`,
+            `I like to run on a treadmill.|When I jog, I need a good pair of running shoes.|I also put on some sunblock before I jog.|I decided to jog because I was gaining weight.|I wanted to lose some weight and I decided to jog.|I jog because I want to keep in shape.|I knew I'd be more tired if I skipped exercising.|I turned around and ran back home, but I was already soaked in the heavy rain.|I learned to check the weather before I go jogging.|I go to a gym at least three times a week to work out.`,
+            `When I first started to work out, I was extremely tired.|The main purpose of going to a gym is to stay fit.|It was not easy to lose weight, so I never miss my workout.|The gym I go to has a lot of exercise equipment.|I often have difficulties because in order to do weight training properly.|Without anyone spotting you, you might drop the dumbbell.|At the gym, I first do stretch, so I won't get hurt during my workout.|After I'm done with running, I do weight training to build up some muscles.|I once won the race in the women's 100 m freestyle.|I know all the strokes and my favorite stroke is freestyle.`,
+            `My mom signed me up for swimming lessons at a sports center.|He actually was a really good swimmer and I learned from him a lot.|I think of him as a great instructor, but I'm still a little scared of him.|Indoor pools were boring, so I asked my parents to take me to the beach.|My mom made me wear a life jacket.|I got very tired and had no energy to swim, and of course I was pretty far from the shore.|I started to drown and I was so scared.|It was the scariest thing ever and since then, I don't really like to swim in the ocean.|It's a used mountain bike with 24 gears.|I usually go riding on my bike along the bank.`,
+            `I always wear my helmet when I ride my bike.|My dad put two training wheels on the rear wheel so that I wouldn't fall down.|Bicycles with four wheels don't go as fast as two-wheeled ones.|He held my bike from the back until I could ride by myself.|He showed me wounds he got from mountain biking.|I decided to give it a try.|Suddenly, a dog jumped in front of me and I had to slam on the brakes.|I couldn't hear his owner calling out the dog's name.|My first international trip was to Canada.|I had traveled to many different spots in Korea, but it was my first time traveling overseas.`,
+            `I had made my first passport as well because it was our first family vacation outside Korea.|I don't know why my dad chose Canada as our first destination.|I always try to pack light when I travel.|Having a heavy or big suitcase actually could be a big hassle.|I also pack an emergency medical kit whenever I travel.|I'd like to travel there because I want to see pyramids and other ancient buildings.|I've always had an admiration for Egypt.|When I get there, I would like to take pictures of the great ancient architecture.|I love going to Jeju Island because I think it is the most beautiful island in Korea.|A lot of movie and drama scenes were filmed there.`,
+            `Since it is an island, seafood there is extremely fresh and delicious.|I would most likely go to Jeju Island for my domestic trip.|I always bring at least one sweater to a trip, even if the place is hot.|After packing clothes, I pack all the toiletries and cosmetics.|The last things I pack are my passport, travel guide, and wallet.|My passport is not necessary if I am traveling within my country.|A travel guide is always useful, even if you know the place well.|I would love to go to places I've been which I do not remember.|I'm a college student majoring in economics.|To talk about my personality, I'm easygoing.`,
+            `I also have a good sense of humor.|Since I'm very outgoing, I like sports that I can do with other people.|I'm a senior majoring in engineering. This is my last semester, so I'm currently looking for a job.|My dad is a businessman. My mom is a housewife.|My sister got married last year and moved out.|I've been working at a trading company for 3 years, and I'm in the sales department.|My name is Park, and I'm in my mid-20s.|My favorite singer and composer is JYP.|I was a little overweight when I was a child.|This is my last semester, so I'm currently looking for a job.`
+        ];
+        const sttSentenceGroups = rawSttSentenceGroups.map(group => group.split('|').map(sentence => sentence.replace(/\bwant to\b/gi, 'wanna')).join('|'));
+        const sttSentences = sttSentenceGroups.reduce((sentences, group) => sentences.concat(group.split('|')), []);
 
         let currentPatternCategory = 'all';
         let currentMemoryCategory = 'greeting';
 
-        function switchTab(tabName) {
+        function switchTab(tabName, tabButton) {
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+            tabButton.classList.add('active');
 
             if (tabName === 'patterns' && !document.getElementById('patternsContainer').dataset.loaded) {
                 renderPatterns('all');
@@ -593,6 +816,7 @@
                 document.getElementById('memoryCardsContainer').dataset.loaded = '1';
             }
             if (tabName === 'overview') renderOverview();
+            if (tabName === 'survey-memory') renderSurveySttGroups();
         }
 
         function buildFilterButtons(containerId, onClickFn, includeAll) {
@@ -728,11 +952,280 @@
             });
         }
 
+        const surveyTopicGroups = [
+            { topic: '영화보기' }, { topic: '공원가기' }, { topic: '해변가기' },
+            { topic: '게임하기' }, { topic: '음악감상하기' }, { topic: '조깅/걷기' },
+            { topic: '집에서 보내는 휴가' }, { topic: '국내여행' }, { topic: '해외여행' },
+            { topic: '운동을 전혀 하지 않음' }, { topic: '기타' }
+        ];
+        const sttTopics = surveyTopicGroups.map(group => group.topic);
+
+        const surveyCustomExpressions = [
+            { topic: '음악감상하기', type: '묘사', question: '최근 좋아하는 음악을 묘사해 보세요.', english: 'I\'ve been really into band music lately. It\'s got this drum tempo that I just love.', korean: '최근 밴드 음악에 푹 빠졌어요. 제가 정말 좋아하는 드럼 템포가 있어요.' },
+            { topic: '음악감상하기', type: '묘사', question: '클래식 음악에 대해 어떻게 생각하나요?', english: 'Classical music isn\'t really my thing, but I understand why some people think it\'s relaxing.', korean: '클래식은 제 취향은 아니지만 사람들이 왜 편안하다고 하는지는 이해해요.' },
+            { topic: '음악감상하기', type: '묘사', question: '좋아하는 음악가의 스타일을 말해 보세요.', english: 'Mrs. GREEN APPLE\'s music has such a unique style, especially its catchy melodies. I can\'t get them out of my head.', korean: 'Mrs. GREEN APPLE의 음악은 독특한 스타일이고 중독성 있는 멜로디가 머릿속에서 떠나지 않아요.' },
+            { topic: '음악감상하기', type: '묘사', question: '발라드 음악의 느낌을 설명해 보세요.', english: 'Ballad music has this cool, laid-back feel that\'s perfect for a chill evening.', korean: '발라드는 편안하고 느긋한 느낌이라 여유로운 저녁에 듣기 좋아요.' },
+            { topic: '음악감상하기', type: '묘사', question: '음악 스트리밍 서비스의 장점을 말해 보세요.', english: 'Music streaming services like YouTube Music are amazing. They let you access so much music anytime.', korean: '유튜브 뮤직 같은 서비스는 언제든 많은 음악을 들을 수 있어서 대단해요.' },
+            { topic: '음악감상하기', type: '습관', question: '유튜브에서 평소 어떤 음악을 듣나요?', english: 'I enjoy listening to other people\'s playlists on YouTube. There are so many great ones, and it\'s nice when I don\'t feel like choosing the music myself.', korean: '음악을 고르기 귀찮을 때 유튜브에서 다른 사람들의 플레이리스트를 들어요.' },
+            { topic: '음악감상하기', type: '습관', question: '악기를 연주하나요?', english: 'I\'m learning to play the drums. It\'s harder than it looks, but so rewarding.', korean: '드럼을 배우고 있어요. 생각보다 어렵지만 정말 보람 있어요.' },
+            { topic: '음악감상하기', type: '습관', question: '옛날 노래를 듣나요?', english: 'Sometimes, I just like to sit back and listen to old classics. They have a timeless quality, you know.', korean: '가끔 편히 앉아 옛날 명곡을 들어요. 시간이 지나도 변하지 않는 매력이 있어요.' },
+            { topic: '음악감상하기', type: '습관', question: '운동할 때 어떤 음악을 듣나요?', english: 'My workout playlist is full of high-energy tracks. They really help keep me motivated.', korean: '운동 플레이리스트는 에너지 넘치는 곡으로 가득하고 운동할 때 동기 부여가 돼요.' },
+            { topic: '음악감상하기', type: '과거경험', question: '콘서트에 가본 경험을 말해 보세요.', english: 'I\'ve been to a few concerts, and the energy of the crowd was just amazing. It was unforgettable.', korean: '콘서트에 몇 번 가봤는데 관중의 에너지가 대단했고 잊을 수 없었어요.' },
+            { topic: '음악감상하기', type: '과거경험', question: '노래 가사에 공감했던 경험을 말해 보세요.', english: 'Sometimes, a song\'s lyrics really resonate with you. It\'s like they mirror your own experiences.', korean: '가끔 노래 가사가 내 경험을 그대로 비추는 것처럼 공감돼요.' },
+            { topic: '음악감상하기', type: '과거경험', question: '최근 앨범을 들어본 경험을 말해 보세요.', english: 'Have you listened to Mrs. GREEN APPLE\'s latest album? His voice is so powerful, and it gives me chills every time.', korean: 'Mrs. GREEN APPLE의 최신 앨범은 목소리가 강렬해서 들을 때마다 소름이 돋아요.' },
+            { topic: '음악감상하기', type: '묘사', question: '좋아하는 음악의 감정을 설명해 보세요.', english: 'Mrs. GREEN APPLE\'s songs have such deep emotions in them. You can really feel the heart and soul in their voice.', korean: 'Mrs. GREEN APPLE의 노래에는 깊은 감정이 있고 목소리에서 진심과 소울을 느낄 수 있어요.' },
+            { topic: '음악감상하기', type: '과거경험', question: '좋아하는 음악가의 재능을 말해 보세요.', english: 'I\'m always impressed by how Mrs. GREEN APPLE produces its own music. It shows incredible talent.', korean: 'Mrs. GREEN APPLE이 직접 음악을 만드는 모습은 정말 대단하고 재능이 느껴져요.' },
+            { topic: '음악감상하기', type: '비교', question: '현재와 과거의 음악 감상 방식을 비교해 보세요.', english: 'These days, I can access countless songs instantly through streaming services, unlike in the past.', korean: '요즘은 예전과 달리 스트리밍 서비스로 수많은 곡을 바로 들을 수 있어요.' },
+            { topic: '해외여행', type: '과거경험', question: '일본 여행에서 기억에 남는 일을 말해 보세요.', english: 'You know, when I went to Japan, those flower gardens just blew me away. I still think about going back.', korean: '일본에 갔을 때 꽃밭이 너무 인상적이어서 아직도 다시 갈 생각을 해요.' },
+            { topic: '해외여행', type: '과거경험', question: '일본에서 먹은 음식 경험을 말해 보세요.', english: 'So I visited Japan a while back, and Tokyo was amazing. Trying authentic sushi there was unforgettable.', korean: '예전에 일본에 갔는데 도쿄가 정말 좋았고 현지 스시가 잊히지 않아요.' },
+            { topic: '해외여행', type: '과거경험', question: '길거리 음식을 먹어본 경험을 말해 보세요.', english: 'I tried Japan\'s street food three months ago, and let me tell you, it was incredible.', korean: '3개월 전에 일본 길거리 음식을 먹어 봤는데 정말 대단했어요.' },
+            { topic: '해외여행', type: '과거경험', question: '뉴욕 여행 경험을 말해 보세요.', english: 'A lot of my friends are traveling to America, and after my trip to New York, I totally get why. It was amazing.', korean: '뉴욕에 다녀와 보니 왜 미국에 많이 가는지 알겠더라고요. 정말 좋았어요.' },
+            { topic: '해외여행', type: '비교', question: '여행이 시야에 준 변화를 말해 보세요.', english: 'I love how traveling to different countries has opened my eyes to new cultures and lifestyles.', korean: '다른 나라를 여행하면서 새로운 문화와 생활방식에 눈을 뜨게 된 점이 좋아요.' },
+            { topic: '해외여행', type: '비교', question: '여행에서 무엇이 더 중요한지 비교해 보세요.', english: "It doesn't matter where you go but who you're with.", korean: '어디로 가는지보다 누구와 함께 가는지가 중요해요.' },
+            { topic: '해외여행', type: '과거경험', question: '여행 중 아쉬웠던 점을 말해 보세요.', english: 'I wish it had been less crowded.', korean: '사람이 조금 덜 많았으면 좋았을 텐데요.' },
+            { topic: '해외여행', type: '과거경험', question: '특별했던 여행지를 표현해 보세요.', english: "It was like nowhere I'd ever been before.", korean: '지금까지 가본 곳과는 전혀 다른 특별한 장소였어요.' },
+            { topic: '공원가기', type: '묘사', question: '공원을 묘사해 보세요.', english: 'There are many big trees that provide lots of shade.', korean: '그늘을 많이 만들어 주는 큰 나무가 많아요.' },
+            { topic: '공원가기', type: '묘사', question: '공원에서 볼 수 있는 것을 말해 보세요.', english: 'You will see nice trees and hedges as well as joggers and bikers.', korean: '나무와 생울타리, 조깅하는 사람과 자전거 타는 사람을 볼 수 있어요.' },
+            { topic: '공원가기', type: '과거경험', question: '공원에 갔던 특별한 경험을 말해 보세요.', english: 'I enjoyed the magnificent nature and unique plants in Eunyeoul Park. The sunset was amazing. It was one of the most remarkable experiences I\'ve ever had.', korean: '은여울 공원의 자연과 식물을 즐겼고 일몰도 정말 아름다웠어요. 가장 기억에 남는 경험 중 하나였어요.' },
+            { topic: '집', type: '묘사', question: '현재 사는 집을 묘사해 보세요.', english: 'First of all, I live in an apartment with my parents.', korean: '우선 저는 부모님과 아파트에 살아요.' },
+            { topic: '집', type: '묘사', question: '집의 분위기를 설명해 보세요.', english: 'My place is bright and spacious, but it can get pretty drafty in the winter.', korean: '우리 집은 밝고 넓지만 겨울에는 외풍 때문에 쌀쌀해요.' },
+            { topic: '집', type: '묘사', question: '집의 구조를 설명해 보세요.', english: "There are four rooms: a living room, my parents' room, my older sister's room, and my room. The kitchen is connected to the living room, so it is super convenient to move around.", korean: '방은 네 개이고 주방이 거실과 연결되어 이동하기 편리해요.' },
+            { topic: '집', type: '묘사', question: '가장 좋아하는 방을 말해 보세요.', english: "What I really love about my home is my room. It is definitely my favorite area. It isn't all that big, but it isn't all that small either. I have everything I need, such as a computer, lots of books, and a bed.", korean: '제가 가장 좋아하는 곳은 제 방이고 컴퓨터, 책, 침대가 있어요.' },
+            { topic: '카페가기', type: '묘사', question: '좋아하는 카페와 음료를 설명해 보세요.', english: "I'm a coffee person. I usually prefer to order an iced Americano. What I really love is Mega Coffee, a Korean franchise cafe.", korean: '저는 커피를 좋아해서 아이스 아메리카노를 주문하고 메가커피를 좋아해요.' },
+            { topic: '카페가기', type: '묘사', question: '좋아하는 카페의 장점을 말해 보세요.', english: 'I can choose different types of milk, such as soy milk or low-fat milk, and it is also very cheap. So it is really useful for me.', korean: '두유나 저지방 우유를 고를 수 있고 가격도 저렴해서 좋아요.' },
+            { topic: '카페가기', type: '습관', question: '카페에서 주로 무엇을 하나요?', english: 'Whenever I go to Mega Coffee, I usually go with my friends. We enjoy talking about recent news and catching up.', korean: '친구들과 가서 최근 뉴스에 대해 이야기하고 근황을 나눠요.' },
+            { topic: '집에서 보내는 휴가', type: '습관', question: '여행을 못 갈 때 휴가를 어떻게 보내나요?', english: "If I'm not able to travel somewhere for a vacation, I usually just stay at home and have a staycation.", korean: '여행을 못 가면 보통 집에 머물며 스테이케이션을 해요.' },
+            { topic: '집에서 보내는 휴가', type: '묘사', question: '호캉스를 설명해 보세요.', english: 'Hocance is a Korean word for enjoying a vacation in a hotel. It helps me relax and reduce my stress.', korean: '호캉스는 호텔에서 휴가를 즐기는 말이고 스트레스를 줄여 줘요.' },
+            { topic: '집안일', type: '묘사', question: '평소 어떤 집안일을 하나요?', english: 'I like to do housework, especially when I get stressed. That is a great way to take my mind off my problems.', korean: '스트레스를 받을 때 집안일을 하면 문제를 잠시 잊을 수 있어요.' },
+            { topic: '집안일', type: '습관', question: '집안일 루틴을 설명해 보세요.', english: 'I vacuum and mop the floor every day. I have long hair, and there is so much hair everywhere in my house, which is annoying.', korean: '매일 바닥을 청소기로 청소하고 걸레질해요. 머리카락이 많이 떨어져요.' },
+            { topic: '집안일', type: '습관', question: '가족이 맡은 집안일을 말해 보세요.', english: 'I walk my dog and feed her in the morning. My mom prepares dinner, and my dad is responsible for recycling. He sorts the recycling at home and takes it out once a week.', korean: '저는 강아지를 돌보고 엄마는 저녁을 준비하며 아빠는 재활용을 담당해요.' },
+            { topic: '집안일', type: '과거경험', question: '하기 어려웠던 집안일 경험을 말해 보세요.', english: 'The worst thing would be cleaning the bathroom. Last weekend, I found some mold on the bathroom tiles. I had not noticed it because it was hidden in the corner.', korean: '가장 힘든 집안일은 욕실 청소예요. 지난 주말 타일에서 곰팡이를 발견했어요.' },
+            { topic: '집안일', type: '과거경험', question: '집안일 문제를 어떻게 해결했나요?', english: "I didn't feel like touching it myself, so I asked my dad to remove the mold. He used a mold killer and cleaned the whole bathroom. It was a terrible experience.", korean: '직접 만지고 싶지 않아서 아빠에게 부탁했고 아빠가 욕실을 청소했어요.' },
+            { topic: '영화보기', type: '묘사', question: '좋아하는 영화와 영화의 특징을 말해 보세요.', english: 'My favorite movie is What Is Your Name? I\'ve seen that movie more than five times. There\'s an unexpected twist in the plot. It is a thought-provoking movie.', korean: '가장 좋아하는 영화는 너의 이름은이고 다섯 번 넘게 봤어요. 반전이 있고 생각할 거리를 주는 영화예요.' },
+            { topic: '영화보기', type: '묘사', question: '영화 사운드트랙의 역할을 말해 보세요.', english: 'I love how a good movie soundtrack can elevate the entire film. It\'s a key part of the experience.', korean: '좋은 영화 음악은 영화 전체를 끌어올리고 감상의 핵심 역할을 해요.' },
+            { topic: '영화보기', type: '비교', question: '어렸을 때와 현재의 영화 산업을 비교해 보세요.', english: 'The Korean movie industry has developed a lot since I was a child. Even though there were great films back then, only a few became popular abroad. Now, the Korean entertainment industry has become very popular, and I\'m so proud of that.', korean: '한국 영화 산업은 어릴 때보다 발전했고 이제 해외에서도 인기가 많아져서 자랑스러워요.' },
+            { topic: '집', type: '묘사', question: '집에 대해 마무리해 보세요.', english: "That's all about my home.", korean: '이것이 제 집에 대한 전부예요.' },
+            { topic: '집', type: '묘사', question: '방을 얼마나 좋아하는지 말해 보세요.', english: 'So I guess you can say that I love my room very much.', korean: '제가 방을 정말 좋아한다고 말할 수 있을 것 같아요.' },
+            { topic: '집에서 보내는 휴가', type: '묘사', question: '호캉스의 장점을 말해 보세요.', english: 'You can book nice hotels at a reasonable price, especially in the off-season.', korean: '특히 비수기에는 괜찮은 호텔을 합리적인 가격에 예약할 수 있어요.' },
+            { topic: '집안일', type: '습관', question: '언제 집안일을 하나요?', english: "I'm normally busy with work on weekdays, so I do housework in the evening or on weekends.", korean: '평일에는 일이 바빠서 저녁이나 주말에 집안일을 해요.' }
+        ];
+
+        const surveyAnswerScripts = [
+            { topic: '영화보기', type: '묘사', question: '좋아하는 영화는 무엇이며 왜 좋아하나요?', english: ['My favorite movie is the animated film Your Name.', 'I have seen it more than five times.', 'It has an unexpected twist in the plot.', 'The story is thoughtful and emotional.', 'That is why I never get tired of watching it.'], korean: ['제가 가장 좋아하는 영화는 애니메이션 너의 이름은입니다.', '그 영화를 다섯 번 넘게 봤어요.', '줄거리에 예상하지 못한 반전이 있어요.', '생각할 거리도 있고 감동적이에요.', '그래서 몇 번을 봐도 질리지 않아요.'] },
+            { topic: '영화보기', type: '습관', question: '영화를 볼 때 보통 어떻게 하나요?', english: ['I usually check online to see what has just been released.', 'Then I go to a theater in my neighborhood.', 'I get my ticket at the ticket booth and buy a snack.', 'I try to focus on the movie because talking distracts me.', 'Going to the movies is a relaxing way to spend my free time.'], korean: ['보통 새로 개봉한 영화가 있는지 인터넷으로 확인해요.', '그다음 동네 영화관에 가요.', '매표소에서 표를 사고 간식도 사요.', '대화하면 집중이 안 돼서 영화에 집중하려고 해요.', '영화 관람은 여가를 편안하게 보내는 방법이에요.'] },
+            { topic: '영화보기', type: '과거경험', question: '최근에 본 영화나 기억에 남는 영화 경험을 말해 보세요.', english: ['The last time I went to the theater, I saw a movie with a friend.', 'The screen was huge, and the sound was amazing.', 'The story had an unexpected twist, so we talked about it afterward.', 'I felt excited and completely forgot about my daily stress.', 'It was a really enjoyable movie experience.'], korean: ['마지막으로 영화관에 갔을 때 친구와 영화를 봤어요.', '스크린이 크고 사운드가 정말 좋았어요.', '이야기에 예상치 못한 반전이 있어서 나중에 그 얘기를 했어요.', '신이 났고 일상 스트레스도 잊었어요.', '정말 즐거운 영화 관람 경험이었어요.'] },
+            { topic: '영화보기', type: '과거경험', question: '최근 본 오디세이는 어땠고 왜 추천하나요?', english: ['I recently watched The Odyssey, directed by Christopher Nolan.', 'It has become a huge hit in Korea and attracted over ten million viewers.', 'The fantasy scenes looked real, and the huge Hollywood visuals were amazing.', 'I was so impressed that I wanted to watch it again.', 'I would recommend it because it was an unforgettable movie.'], korean: ['최근 크리스토퍼 놀란 감독의 오디세이를 봤어요.', '한국에서 천만 관객을 넘길 정도로 큰 인기를 얻었어요.', '판타지 장면이 실제처럼 보였고 할리우드의 거대한 영상미가 놀라웠어요.', '정말 감명받아서 다시 보고 싶었어요.', '잊을 수 없는 영화라 추천하고 싶어요.'] },
+            { topic: '영화보기', type: '비교', question: '어렸을 때와 요즘 영화 관람은 어떻게 달라졌나요?', english: ['The Korean movie industry has developed a lot since I was a child.', 'Back then, only a few Korean movies became popular overseas.', 'These days, Korean films and shows are popular around the world.', 'I was surprised to see how much things had changed.', 'I feel proud when people enjoy Korean movies.'], korean: ['한국 영화 산업은 제가 어렸을 때보다 많이 발전했어요.', '그때는 해외에서 인기를 얻은 한국 영화가 많지 않았어요.', '요즘은 한국 영화와 드라마가 전 세계에서 인기가 있어요.', '얼마나 많이 달라졌는지 보고 놀랐어요.', '사람들이 한국 영화를 즐기는 걸 보면 뿌듯해요.'] },
+            { topic: '공원가기', type: '묘사', question: '자주 가는 공원은 어떤 곳인가요?', english: ['My favorite park is Eunyeoul Park near my home.', 'It has big trees that provide plenty of shade.', 'There are nice hedges, walking paths, and a small pond.', 'I can see joggers and people riding bikes there.', 'It is a peaceful place where I can get some fresh air.'], korean: ['제가 좋아하는 공원은 집 근처의 은여울 공원이에요.', '그늘을 많이 만들어 주는 큰 나무가 있어요.', '예쁜 생울타리와 산책로, 작은 연못도 있어요.', '조깅하는 사람과 자전거 타는 사람도 볼 수 있어요.', '신선한 공기를 마실 수 있는 평화로운 곳이에요.'] },
+            { topic: '공원가기', type: '습관', question: '공원에 가면 주로 무엇을 하고 누구와 가나요?', english: ['Whenever I go to the park, I take my puppy for a walk.', 'I always bring my earphones because walking by itself can be boring.', 'Listening to upbeat songs makes the walk much more fun.', 'The music also helps me relax while my puppy enjoys being outside.', 'That is why I like walking in the park with my puppy and my music.'], korean: ['공원에 갈 때마다 강아지를 데리고 산책해요.', '그냥 걷기만 하면 지루할 수 있어서 이어폰을 꼭 챙겨요.', '신나는 노래를 들으면 산책이 훨씬 재미있어져요.', '음악을 들으며 저는 긴장을 풀고 강아지는 야외 시간을 즐겨요.', '그래서 강아지와 음악을 함께하며 공원에서 걷는 걸 좋아해요.'] },
+            { topic: '공원가기', type: '습관', question: '공원에 가기 전에 무엇을 준비하나요?', english: ['Before I leave, I check the weather and get my puppy\'s leash.', 'I always bring my earphones because they are important to me.', 'Walking without music feels boring, but upbeat songs make it fun.', 'I listen to music while my puppy walks beside me.', 'That is why I always bring my earphones when we go to the park.'], korean: ['나가기 전에 날씨를 확인하고 강아지 목줄을 챙겨요.', '이어폰은 저에게 중요해서 항상 가져가요.', '음악 없이 걸으면 지루하지만 신나는 노래를 들으면 재미있어요.', '강아지가 옆에서 걷는 동안 음악을 들어요.', '그래서 공원에 갈 때 이어폰을 늘 챙겨요.'] },
+            { topic: '공원가기', type: '과거경험', question: '공원에서 있었던 기억에 남는 일을 말해 보세요.', english: ['One day, I enjoyed the beautiful plants and scenery at Eunyeoul Park.', 'The sunset was amazing, and I took a lot of pictures.', 'I felt calm and forgot about my daily stress.', 'It was one of the most memorable afternoons I have ever had.', 'I still want to go back there.'], korean: ['어느 날 은여울 공원에서 아름다운 식물과 풍경을 즐겼어요.', '일몰이 정말 아름다워서 사진을 많이 찍었어요.', '마음이 차분해지고 일상 스트레스도 잊었어요.', '지금까지 보낸 오후 중 가장 기억에 남는 시간 중 하나였어요.', '아직도 그곳에 다시 가고 싶어요.'] },
+            { topic: '공원가기', type: '과거경험', question: '마지막으로 공원에 간 날과 기억에 남는 순간을 말해 보세요.', english: ['The last time I went to Eunyeoul Park was a few weeks ago.', 'I walked around with my puppy and looked at the plants.', 'The sunset was beautiful, so I took some pictures.', 'I felt peaceful and forgot about my busy schedule for a while.', 'That is why I still remember that afternoon so clearly.'], korean: ['마지막으로 은여울 공원에 간 것은 몇 주 전이에요.', '강아지와 주변을 걷고 식물들을 구경했어요.', '일몰이 아름다워서 사진을 몇 장 찍었어요.', '평화로운 기분이 들었고 잠시 바쁜 일상을 잊었어요.', '그래서 그날 오후가 아직도 선명하게 기억나요.'] },
+            { topic: '공원가기', type: '과거경험', question: '공원 행사나 야외 활동에서 겪은 기억에 남는 일을 말해 보세요.', english: ['A while ago, I went to an outdoor event at a park with my family.', 'After walking around for a while, I suddenly felt like I needed to take a dump.', 'There was no restroom nearby, and I could not run comfortably, so I walked slowly and looked for one.', 'Luckily, I found a Starbucks and used the restroom just in time.', 'I felt so relieved, and I still remember that stressful moment.'], korean: ['얼마 전 가족과 공원에서 열린 야외 행사에 갔어요.', '한동안 돌아다니다가 갑자기 화장실이 정말 급해졌어요.', '근처에 화장실이 없었고 편하게 뛸 수도 없어서 천천히 걸으며 찾았어요.', '다행히 스타벅스를 찾아 간신히 화장실을 이용했어요.', '정말 안도했고 그 긴박했던 순간이 아직도 기억나요.'] },
+            { topic: '공원가기', type: '비교', question: '예전과 요즘 공원에서 보내는 시간을 비교해 보세요.', english: ['In the past, I did not go to the park very often.', 'These days, I visit it when I need a break from my routine.', 'I usually take a walk or sit on the grass and read.', 'The park feels more important to me now because it helps me relax.', 'That is why I try to make time for it.'], korean: ['예전에는 공원에 자주 가지 않았어요.', '요즘은 일상에서 쉬고 싶을 때 공원에 가요.', '보통 산책하거나 잔디에 앉아 책을 읽어요.', '긴장을 풀게 해줘서 지금은 공원이 더 중요하게 느껴져요.', '그래서 시간을 내서 가려고 해요.'] },
+            { topic: '해변가기', type: '묘사', question: '좋아하는 해변을 묘사하고 왜 추천하는지 말해 보세요.', english: ['My favorite beach is Conan Beach on Jeju Island.', 'The sand is incredibly white, and the water is a beautiful emerald color.', 'The view is so beautiful that I forget about my stress.', 'I feel calm and comfortable as soon as I get there.', 'The white sand and emerald water make it a place I highly recommend.'], korean: ['제가 가장 좋아하는 해변은 제주도에 있는 코난해변이에요.', '모래가 정말 하얗고 바다는 아름다운 에메랄드빛이에요.', '풍경이 너무 아름다워서 스트레스를 잊게 돼요.', '도착하자마자 차분하고 편안해져요.', '하얀 모래와 에메랄드빛 바다 때문에 꼭 추천하고 싶은 곳이에요.'] },
+            { topic: '해변가기', type: '습관', question: '해변에 가면 보통 무엇을 하나요?', english: ['When I go to the beach, I usually take a slow walk along the shore.', 'I like looking at the waves and taking a few pictures.', 'If I get tired, I sit down and enjoy the view.', 'The ocean breeze helps me feel refreshed.', 'I usually leave feeling much more relaxed.'], korean: ['해변에 가면 보통 해안을 따라 천천히 걸어요.', '파도를 보고 사진도 몇 장 찍는 걸 좋아해요.', '피곤하면 앉아서 풍경을 즐겨요.', '바닷바람을 쐬면 기분이 상쾌해져요.', '보통 훨씬 편안해진 기분으로 돌아와요.'] },
+            { topic: '해변가기', type: '과거경험', question: '해변에서 겪은 기억에 남는 일을 말해 보세요.', english: ['One day, I was walking along the beach when I suddenly needed to take a dump.', 'There was no restroom nearby, and I was too uncomfortable to run.', 'I walked slowly and looked for a cafe while trying to hold it in.', 'Luckily, I found a Starbucks and used the restroom just in time.', 'I felt so relieved and will always remember that day.'], korean: ['어느 날 해변을 걷다가 갑자기 화장실이 너무 급해졌어요.', '근처에 화장실이 없었고 불편해서 뛸 수도 없었어요.', '참으면서 천천히 걸어 카페를 찾았어요.', '다행히 스타벅스를 찾아 간신히 화장실을 이용했어요.', '정말 안도했고 그날을 계속 기억할 것 같아요.'] },
+            { topic: '해변가기', type: '비교', question: '예전과 요즘 해변에서 보내는 시간을 비교해 보세요.', english: ['When I was younger, I mostly played in the water at the beach.', 'These days, I enjoy walking along the shore and looking at the view.', 'I do not need to do anything special to have a good time there.', 'A quiet walk feels more relaxing to me now.', 'That is why I enjoy the beach in a different way.'], korean: ['어렸을 때는 해변에서 주로 물놀이를 했어요.', '요즘은 해안을 따라 걸으며 풍경을 보는 걸 즐겨요.', '그곳에서 즐겁게 보내기 위해 특별한 일을 할 필요는 없어요.', '지금은 조용히 걷는 것이 더 편안하게 느껴져요.', '그래서 해변을 예전과는 다른 방식으로 즐겨요.'] },
+            { topic: '게임하기', type: '묘사', question: '좋아하는 게임과 그 이유를 설명해 보세요.', english: ['I am a big fan of video games, especially games on my PlayStation 5.', 'My favorite game is Sekiro because the sword sounds feel very realistic.', 'It is a challenging game, so every stage takes a lot of practice.', 'I feel a real sense of achievement when I finally beat a difficult boss.', 'That is why I keep coming back to the game.'], korean: ['저는 비디오 게임, 특히 플레이스테이션 5 게임을 좋아해요.', '칼 소리가 아주 현실적으로 들려서 세키로를 가장 좋아해요.', '어려운 게임이라 각 단계를 깨려면 연습이 많이 필요해요.', '어려운 보스를 마침내 이기면 정말 성취감을 느껴요.', '그래서 계속 그 게임을 하게 돼요.'] },
+            { topic: '게임하기', type: '습관', question: '게임을 얼마나 자주, 얼마나 오래 하나요?', english: ['I usually play games on my PlayStation on weekends.', 'I can play for a few hours when I have plenty of free time.', 'I like trying different games, but I spend the most time on Sekiro.', 'Gaming helps me relax and forget about stress for a while.', 'I try to stop after a few hours so I can do other things, too.'], korean: ['주말에 보통 플레이스테이션 게임을 해요.', '여유 시간이 많으면 몇 시간 동안 할 수 있어요.', '다른 게임도 해보지만 세키로를 가장 오래 해요.', '게임을 하면 긴장을 풀고 잠시 스트레스를 잊을 수 있어요.', '다른 일도 할 수 있도록 몇 시간 후에는 멈추려고 해요.'] },
+            { topic: '게임하기', type: '과거경험', question: '게임을 하다가 기억에 남는 일이 있었나요?', english: ['One time, I was playing a very difficult part of Sekiro.', 'I got so focused that I started shouting at the screen.', 'My parents came in and asked if I was fighting with someone.', 'I laughed because they thought something serious had happened.', 'It is still one of my funniest gaming memories.'], korean: ['한번은 세키로의 아주 어려운 부분을 하고 있었어요.', '너무 집중한 나머지 화면을 보며 소리를 지르기 시작했어요.', '부모님이 들어오셔서 누구와 싸우고 있냐고 물으셨어요.', '부모님은 심각한 일이 생긴 줄 아셨다니 웃음이 났어요.', '지금도 가장 웃긴 게임 기억 중 하나예요.'] },
+            { topic: '게임하기', type: '비교', question: '어릴 때와 지금의 게임 취향을 비교해 보세요.', english: ['When I was younger, I was mostly interested in PlayStation games.', 'I once visited a game convention and looked only at PlayStation booths.', 'These days, I enjoy checking out different devices, like the Nintendo Switch.', 'My interests have become broader as I have gotten older.', 'Still, challenging console games are my favorite.'], korean: ['어렸을 때는 플레이스테이션 게임에 주로 관심이 있었어요.', '한번은 게임 전시회에 가서 플레이스테이션 부스만 봤어요.', '요즘은 닌텐도 스위치 같은 다양한 기기도 살펴봐요.', '나이가 들면서 관심사가 더 넓어졌어요.', '그래도 어려운 콘솔 게임이 가장 좋아요.'] },
+
+            { topic: '음악감상하기', type: '묘사', question: '요즘 좋아하는 음악과 그 이유를 말해 보세요.', english: ['I have been really into band music lately.', 'I love the drum tempo and the catchy melodies.', 'I recently listened to Mrs. GREEN APPLE\'s latest album, and the powerful voice gave me chills.', 'The band has a unique style, and I admire how it makes its own music with deep emotions.', 'That is why band music is my favorite these days.'], korean: ['최근 밴드 음악에 푹 빠져 있어요.', '드럼 템포와 중독성 있는 멜로디가 좋아요.', '최근 Mrs. GREEN APPLE의 새 앨범을 들었는데 강렬한 목소리에 소름이 돋았어요.', '독특한 스타일이고 깊은 감정을 담아 직접 음악을 만드는 점이 멋져요.', '그래서 요즘 밴드 음악을 가장 좋아해요.'] },
+            { topic: '음악감상하기', type: '묘사', question: '클래식 음악에 대해 어떻게 생각하나요?', english: ['Classical music is not really my thing.', 'I usually prefer band music or ballads.', 'Still, I understand why some people find classical music relaxing.', 'It has a calm sound that is nice in the background.', 'I guess you can say that I enjoy it once in a while, even though it is not my favorite.'], korean: ['클래식 음악은 제 취향은 아니에요.', '저는 보통 밴드 음악이나 발라드를 더 좋아해요.', '그래도 어떤 사람들이 클래식을 편안하게 느끼는 이유는 이해해요.', '배경으로 틀어두기 좋은 차분한 소리가 있어요.', '가장 좋아하는 음악은 아니지만 가끔 즐긴다고 할 수 있어요.'] },
+            { topic: '음악감상하기', type: '습관', question: '평소 언제, 어떤 음악을 듣나요?', english: ['I use music streaming services like YouTube Music whenever I have free time.', 'I often choose other people\'s playlists when I do not feel like picking songs myself.', 'I play high-energy tracks when I work out and old classics when I want to relax.', 'I am also learning to play the drums, even though it is harder than it looks.', 'Listening to music is an easy way for me to recharge.'], korean: ['여유 시간이 있을 때 유튜브 뮤직 같은 스트리밍 서비스를 이용해요.', '직접 곡을 고르기 귀찮을 때 다른 사람들의 플레이리스트를 들어요.', '운동할 때는 신나는 곡을, 쉬고 싶을 때는 옛날 명곡을 들어요.', '생각보다 어렵지만 드럼 연주도 배우고 있어요.', '음악 감상은 쉽게 에너지를 충전하는 방법이에요.'] },
+            { topic: '음악감상하기', type: '과거경험', question: '콘서트나 노래를 듣고 기억에 남았던 경험을 말해 보세요.', english: ['I have been to a few concerts with my friend.', 'The crowd was full of energy, and everyone sang along.', 'Some song lyrics really resonated with me because they reminded me of my own experiences.', 'I was excited, and the whole show gave me chills.', 'It was unforgettable, and I would love to go again.'], korean: ['친구와 콘서트에 몇 번 가봤어요.', '관객에게 에너지가 넘쳤고 모두 함께 노래를 따라 불렀어요.', '어떤 노래 가사는 제 경험을 떠올리게 해서 정말 공감됐어요.', '신이 났고 공연 내내 소름이 돋았어요.', '잊을 수 없는 경험이라 다시 가고 싶어요.'] },
+            { topic: '음악감상하기', type: '비교', question: '예전과 요즘의 음악 감상 방식은 어떻게 다른가요?', english: ['In the past, I had to choose music and keep it on my device.', 'These days, I can use a streaming service to find almost any song.', 'I can also listen to playlists made by other people.', 'It is much easier and more convenient now.', 'That is why I listen to music more often these days.'], korean: ['예전에는 음악을 직접 골라 기기에 저장해야 했어요.', '요즘은 스트리밍 서비스로 거의 모든 노래를 찾을 수 있어요.', '다른 사람들이 만든 플레이리스트도 들을 수 있어요.', '지금은 훨씬 쉽고 편리해요.', '그래서 요즘 음악을 더 자주 들어요.'] },
+            { topic: '음악감상하기', type: '묘사', question: '사람들이 음악을 들을 때 어떤 기기를 사용하나요?', english: ['Most people listen to music on their smartphones these days.', 'They use streaming apps and wireless earphones.', 'Some people also use speakers at home when they want better sound.', 'These devices are convenient because people can listen almost anywhere.', 'That is why smartphones and earphones are so popular for music.'], korean: ['요즘 대부분의 사람들은 스마트폰으로 음악을 들어요.', '스트리밍 앱과 무선 이어폰을 사용해요.', '더 좋은 소리를 원할 때 집에서 스피커를 쓰는 사람도 있어요.', '거의 어디서나 들을 수 있어 편리해요.', '그래서 스마트폰과 이어폰이 음악 감상에 인기가 많아요.'] },
+            { topic: '음악감상하기', type: '비교', question: '밴드 음악과 발라드를 비교해 보세요.', english: ['Band music usually has a strong beat and lots of energy.', 'Ballads are slower and focus more on the singer\'s emotions.', 'I listen to band music when I want to feel excited.', 'I choose ballads when I want to relax in the evening.', 'That is why I enjoy both genres for different reasons.'], korean: ['밴드 음악은 보통 비트가 강하고 에너지가 넘쳐요.', '발라드는 더 느리고 가수의 감정에 집중해요.', '신나고 싶을 때는 밴드 음악을 들어요.', '저녁에 쉬고 싶을 때는 발라드를 골라요.', '그래서 서로 다른 이유로 두 장르를 모두 즐겨요.'] },
+
+            { topic: '조깅/걷기', type: '묘사', question: '걷기나 조깅을 좋아하는 이유를 말해 보세요.', english: ['Going for a walk is one of my favorite ways to spend free time.', 'I often walk around a park with my puppy.', 'The trees and fresh air make the walk enjoyable.', 'It helps both of us relax and stay active.', 'That is why I enjoy walking so much.'], korean: ['산책은 여가를 보내는 제가 가장 좋아하는 방법 중 하나예요.', '강아지와 공원 주변을 자주 걸어요.', '나무와 신선한 공기 덕분에 산책이 즐거워요.', '저희 둘 다 긴장을 풀고 활동적으로 지내는 데 도움이 돼요.', '그래서 산책을 정말 좋아해요.'] },
+            { topic: '조깅/걷기', type: '묘사', question: '강아지와 걷거나 조깅하는 것이 왜 좋은가요?', english: ['Going for a walk is one of my favorite ways to spend my free time.', 'Whenever I go jogging, I take my puppy with me for a walk.', 'It helps both of us reduce stress and stay active.', 'It also helps strengthen the bond between my puppy and me.', 'That is why I love walking and jogging with my puppy.'], korean: ['산책은 제가 여가를 보내는 가장 좋아하는 방법 중 하나예요.', '조깅하러 갈 때마다 강아지도 데리고 산책해요.', '저희 둘 다 스트레스를 줄이고 활동적으로 지내는 데 도움이 돼요.', '강아지와 저 사이의 유대감도 더 강해져요.', '그래서 강아지와 걷고 조깅하는 걸 좋아해요.'] },
+            { topic: '조깅/걷기', type: '습관', question: '산책이나 조깅을 어떻게 하나요?', english: ['I usually go for a walk with my puppy near my home.', 'If I have more energy, I jog for a short time.', 'I wear comfortable shoes and bring some water.', 'Moving around helps me reduce stress and feel refreshed.', 'I try to do it whenever I have enough time.'], korean: ['보통 집 근처에서 강아지와 산책해요.', '기운이 더 있으면 잠깐 조깅을 해요.', '편한 신발을 신고 물도 챙겨요.', '몸을 움직이면 스트레스가 줄고 상쾌해져요.', '시간이 충분할 때마다 하려고 해요.'] },
+            { topic: '조깅/걷기', type: '습관', question: '보통 얼마나 멀리, 얼마나 자주 걷나요?', english: ['I usually walk around the park near my home.', 'One lap takes about fifteen minutes, and I often do two or three laps.', 'I try to go a few times a week when the weather is nice.', 'I do not walk very fast because I like to enjoy the surroundings.', 'That is why walking fits easily into my routine.'], korean: ['보통 집 근처 공원 주변을 걸어요.', '한 바퀴에 15분 정도 걸려서 두세 바퀴 도는 편이에요.', '날씨가 좋으면 일주일에 몇 번 가려고 해요.', '주변 풍경을 즐기고 싶어서 아주 빠르게 걷지는 않아요.', '그래서 산책은 제 일과에 쉽게 들어맞아요.'] },
+            { topic: '조깅/걷기', type: '과거경험', question: '산책이나 운동 중 겪은 예상치 못한 일을 말해 보세요.', english: ['One day, I was walking outside when I suddenly needed to use the restroom.', 'There was no restroom nearby, so I could not hurry too much.', 'I walked slowly and looked for a cafe or a public restroom.', 'Luckily, I found a Starbucks and took care of it in time.', 'I felt so relieved, and I always check the area now.'], korean: ['어느 날 밖에서 걷다가 갑자기 화장실이 급하게 필요했어요.', '근처에 화장실이 없어서 너무 서두를 수도 없었어요.', '천천히 걸으며 카페나 공중화장실을 찾았어요.', '다행히 스타벅스를 찾아 제때 해결했어요.', '정말 안도했고 이제는 주변을 미리 확인해요.'] },
+            { topic: '조깅/걷기', type: '비교', question: '예전과 요즘 운동 습관을 비교해 보세요.', english: ['When I was younger, I did not exercise very regularly.', 'These days, I try to walk or jog when I have free time.', 'I do not go to the gym much, so walking works well for me.', 'It is simple and does not require special equipment.', 'I feel healthier when I keep this routine.'], korean: ['어렸을 때는 규칙적으로 운동하지 않았어요.', '요즘은 여유 시간이 있으면 걷거나 조깅하려고 해요.', '헬스장에는 자주 가지 않아서 산책이 잘 맞아요.', '간단하고 특별한 장비도 필요 없어요.', '이 습관을 유지하면 더 건강해진 기분이에요.'] },
+            { topic: '집에서 보내는 휴가', type: '묘사', question: '집에서 보내는 휴가와 호캉스에 대해 말해 보세요.', english: ['I truly believe staying in is a great way to spend free time.', 'My home is comfortable, and I have everything I need there.', 'Sometimes I enjoy a hotel stay, especially when I can book a nice room in the off-season.', 'It helps me relax and reduce stress.', 'That is why I enjoy both staycations and hocance.'], korean: ['집에 머무는 것이 여가를 보내는 좋은 방법이라고 생각해요.', '집은 편안하고 필요한 것이 다 있어요.', '가끔은 특히 비수기에 좋은 방을 예약해 호텔에서 쉬는 것도 좋아해요.', '긴장을 풀고 스트레스를 줄이는 데 도움이 돼요.', '그래서 스테이케이션과 호캉스를 모두 즐겨요.'] },
+            { topic: '집에서 보내는 휴가', type: '습관', question: '집에서 쉬는 날에는 주로 무엇을 하나요?', english: ['When I have a day off, I usually stay home and take it easy.', 'I watch a movie or play a game for a while.', 'Sometimes I order a drink and spend time on my own.', 'It is helpful because I can fully recharge.', 'I feel ready for the next week afterward.'], korean: ['쉬는 날에는 보통 집에 머물며 편히 쉬어요.', '영화를 보거나 잠깐 게임을 해요.', '가끔 음료를 주문하고 혼자 시간을 보내요.', '완전히 재충전할 수 있어서 도움이 돼요.', '그렇게 쉬고 나면 다음 주를 맞을 준비가 돼요.'] },
+            { topic: '집에서 보내는 휴가', type: '습관', question: '집에서 평일과 주말을 어떻게 보내나요?', english: ['On weekdays, I am usually busy, so I relax at home in the evening.', 'I watch a show or listen to music after I finish my work.', 'On weekends, I have more time to play games or watch a movie.', 'I enjoy being at home because I can recharge at my own pace.', 'That is why my weekend routine usually includes a quiet day at home.'], korean: ['평일에는 보통 바빠서 저녁에 집에서 쉬어요.', '할 일을 마치면 프로그램을 보거나 음악을 들어요.', '주말에는 게임을 하거나 영화를 볼 시간이 더 많아요.', '제 속도에 맞춰 재충전할 수 있어서 집에 있는 걸 좋아해요.', '그래서 주말에는 보통 집에서 조용히 보내는 날이 있어요.'] },
+            { topic: '집에서 보내는 휴가', type: '과거경험', question: '집에서 보낸 휴가 중 기억에 남는 일을 말해 보세요.', english: ['One weekend, I stayed home and played Sekiro on my PlayStation 5.', 'The game was so difficult that I got really focused and started shouting at the screen.', 'My parents came in and asked, "Is something wrong? Are you fighting with someone?"', 'They thought I was arguing with a real person, which made me laugh.', 'I guess you can say that gaming made that stay-at-home weekend unforgettable.'], korean: ['한 주말에 집에 머물며 플레이스테이션 5로 세키로를 했어요.', '게임이 너무 어려워서 집중한 나머지 화면을 보며 소리를 지르기 시작했어요.', '부모님이 들어오셔서 "무슨 일이야? 누구랑 싸우는 거야?"라고 물으셨어요.', '진짜 사람과 다투는 줄 아셨다니 웃음이 났어요.', '게임 덕분에 집에서 보낸 그 주말이 잊지 못할 추억이 됐다고 할 수 있어요.'] },
+            { topic: '집에서 보내는 휴가', type: '비교', question: '예전과 요즘 여가를 보내는 방식을 비교해 보세요.', english: ['In the past, I preferred going out and playing soccer with my friends.', 'These days, I enjoy staying home and relaxing by myself.', 'Free time is the only time when I can fully recharge.', 'Staying in gives me energy for the next day.', 'I guess you can say that I really enjoy a quiet staycation.'], korean: ['예전에는 밖에 나가 친구들과 축구하는 걸 더 좋아했어요.', '요즘은 집에 머물며 혼자 쉬는 걸 즐겨요.', '여가 시간은 제가 완전히 재충전할 수 있는 유일한 시간이에요.', '집에서 쉬면 다음 날을 위한 에너지가 생겨요.', '조용한 스테이케이션을 정말 좋아한다고 할 수 있어요.'] },
+            { topic: '국내여행', type: '묘사', question: '국내에서 가장 좋아하는 여행지를 설명해 보세요.', english: ['My favorite place for a domestic trip is Jeju Island.', 'It is one of the most beautiful places in Korea.', 'A lot of movies and dramas have been filmed there.', 'Since it is an island, the seafood is fresh and delicious.', 'I always enjoy the scenery and relaxed atmosphere there.'], korean: ['국내 여행으로 가장 좋아하는 곳은 제주도예요.', '한국에서 가장 아름다운 곳 중 하나예요.', '그곳에서 많은 영화와 드라마가 촬영됐어요.', '섬이라 해산물이 신선하고 맛있어요.', '풍경과 여유로운 분위기를 늘 즐겨요.'] },
+            { topic: '국내여행', type: '묘사', question: '국내여행에서 산과 바다 중 무엇을 선호하며 왜 제주도를 좋아하나요?', english: ['My favorite domestic destination is Jeju Island.', 'I like it because I can enjoy mountains, rocks, and beaches in one place.', 'It also has many modern cafes where I can take a break.', 'The local black pork dishes are delicious, too.', 'That is why Jeju is the best place for me to enjoy different things on one trip.'], korean: ['제가 가장 좋아하는 국내 여행지는 제주도예요.', '한곳에서 산과 바위, 해변을 모두 즐길 수 있어서 좋아요.', '쉬어갈 수 있는 현대적인 카페도 많아요.', '현지 흑돼지 요리도 맛있어요.', '그래서 한 번의 여행에서 다양한 것을 즐길 수 있는 제주도가 저에게 가장 좋아요.'] },
+            { topic: '국내여행', type: '습관', question: '국내여행을 갈 때 주로 어떻게 준비하나요?', english: ['When I plan a domestic trip, I first choose a place I want to visit.', 'I check the weather and look up a few things to do there.', 'I pack comfortable clothes and the basic things I need.', 'I try not to bring too much because a heavy bag is a hassle.', 'Planning this way makes the trip easier and more enjoyable.'], korean: ['국내여행을 계획할 때 먼저 가고 싶은 곳을 정해요.', '날씨를 확인하고 할 일을 몇 가지 찾아봐요.', '편한 옷과 필요한 기본 물건을 챙겨요.', '무거운 가방은 번거로워서 너무 많이 가져가지 않아요.', '이렇게 준비하면 여행이 더 편하고 즐거워요.'] },
+            { topic: '국내여행', type: '과거경험', question: '국내여행 중 기억에 남는 경험을 말해 보세요.', english: ['I once went to Jeju Island with my family.', 'We visited a scenic area and tried fresh seafood.', 'The weather was nice, and the sunset was beautiful.', 'I took lots of pictures and felt very relaxed.', 'It is still one of my favorite travel memories.'], korean: ['예전에 가족과 제주도에 간 적이 있어요.', '경치 좋은 곳을 방문하고 신선한 해산물을 먹었어요.', '날씨가 좋았고 일몰이 아름다웠어요.', '사진을 많이 찍고 정말 편안하게 느꼈어요.', '지금도 가장 좋아하는 여행 기억 중 하나예요.'] },
+            { topic: '국내여행', type: '과거경험', question: '제주도에서 무엇을 했고 어떤 점이 기억에 남았나요?', english: ['I visited Jeju Island with my family a while ago.', 'We saw the ocean, walked around a rocky area, and visited a modern cafe.', 'We also tried black pork, which was really delicious.', 'I enjoyed how nature and city comforts were close to each other.', 'That is why the trip is still one of my favorite memories.'], korean: ['얼마 전에 가족과 제주도에 갔어요.', '바다를 보고 바위가 있는 곳을 걸은 뒤 현대적인 카페에도 갔어요.', '흑돼지도 먹었는데 정말 맛있었어요.', '자연과 도시의 편리함이 가까이 있다는 점이 좋았어요.', '그래서 그 여행은 아직도 제가 가장 좋아하는 추억 중 하나예요.'] },
+            { topic: '국내여행', type: '비교', question: '국내여행에서 산과 해변 중 어디를 더 좋아하나요?', english: ['I enjoy both mountains and beaches, but I prefer places where I can see both.', 'That is one reason I like Jeju Island so much.', 'I can walk near the ocean and also enjoy mountain scenery on the same trip.', 'The different landscapes make the trip more interesting.', 'That is why Jeju is my favorite domestic destination.'], korean: ['산과 해변을 모두 좋아하지만 두 곳을 다 볼 수 있는 여행지를 더 선호해요.', '그것이 제가 제주도를 특히 좋아하는 이유 중 하나예요.', '한 여행에서 바닷가를 걷고 산 풍경도 즐길 수 있어요.', '다양한 풍경 덕분에 여행이 더 흥미로워져요.', '그래서 제주도가 제가 가장 좋아하는 국내 여행지예요.'] },
+            { topic: '국내여행', type: '과거경험', question: '여행 중 갑자기 화장실이 급했던 경험을 말해 보세요.', english: ['I was traveling in Korea when I suddenly needed to use the restroom.', 'There was no restroom nearby, and I could not run because I felt uncomfortable.', 'I walked slowly and looked for a cafe along the way.', 'Luckily, I found a Starbucks and made it in time.', 'I felt relieved, and now I check for restrooms when I travel.'], korean: ['국내여행 중 갑자기 화장실이 급하게 필요했어요.', '근처에 화장실이 없었고 불편해서 뛸 수도 없었어요.', '천천히 걸으며 가는 길에 카페를 찾았어요.', '다행히 스타벅스를 찾아 제때 해결했어요.', '안도했고 이제 여행할 때 화장실을 확인해요.'] },
+            { topic: '국내여행', type: '비교', question: '어렸을 때와 지금의 국내여행은 어떻게 다른가요?', english: ['When I was younger, my parents planned most of our family trips.', 'I mainly followed their schedule and enjoyed the activities.', 'These days, I choose destinations and plan what I want to do.', 'I also pay more attention to food and local culture.', 'Traveling feels more personal and interesting now.'], korean: ['어렸을 때는 부모님이 가족 여행을 대부분 계획하셨어요.', '저는 주로 일정을 따라가며 활동을 즐겼어요.', '요즘은 목적지를 고르고 하고 싶은 일을 계획해요.', '음식과 지역 문화에도 더 관심을 가져요.', '이제 여행이 더 개인적이고 흥미롭게 느껴져요.'] },
+            { topic: '해외여행', type: '묘사', question: '가보고 싶은 해외 여행지와 그 이유를 말해 보세요.', english: ['I would love to visit Egypt someday.', 'I have always been interested in its pyramids and ancient buildings.', 'I would like to see the architecture in person and take pictures.', 'Learning about a different culture sounds exciting to me.', 'I think it would be an unforgettable trip.'], korean: ['언젠가 이집트에 꼭 가보고 싶어요.', '피라미드와 고대 건축물에 늘 관심이 있었어요.', '건축물을 직접 보고 사진도 찍고 싶어요.', '다른 문화를 배우는 것이 흥미로울 것 같아요.', '잊지 못할 여행이 될 것 같아요.'] },
+            { topic: '해외여행', type: '습관', question: '해외여행을 갈 때 무엇을 챙기나요?', english: ['I try to pack light whenever I travel abroad.', 'I pack comfortable clothes and basic toiletries first.', 'I also bring a sweater, even if the destination is warm.', 'My passport, wallet, and travel information go in my carry-on bag.', 'Packing this way helps me avoid unnecessary stress.'], korean: ['해외여행을 갈 때는 짐을 가볍게 싸려고 해요.', '먼저 편한 옷과 기본 세면도구를 챙겨요.', '목적지가 따뜻해도 스웨터를 가져가요.', '여권, 지갑, 여행 정보는 기내용 가방에 넣어요.', '이렇게 짐을 싸면 불필요한 스트레스를 줄일 수 있어요.'] },
+            { topic: '해외여행', type: '과거경험', question: '해외여행 중 기억에 남는 일을 말해 보세요.', english: ['My first trip abroad was to Canada with my family.', 'It was my first time traveling outside Korea, so everything felt new.', 'I saw many interesting places and tried food I had never had before.', 'I felt excited, and I still remember the trip clearly.', 'It made me want to explore more countries in the future.'], korean: ['첫 해외여행은 가족과 함께 간 캐나다였어요.', '한국 밖으로 처음 여행한 거라 모든 것이 새로웠어요.', '흥미로운 곳을 많이 보고 처음 먹어보는 음식도 맛봤어요.', '신이 났고 아직도 그 여행이 선명하게 기억나요.', '앞으로 더 많은 나라를 여행하고 싶어졌어요.'] },
+            { topic: '해외여행', type: '과거경험', question: '일본 여행에서 기억에 남는 음식과 장소를 말해 보세요.', english: ['I visited Japan a while ago, and Tokyo was amazing.', 'The flower gardens really blew me away.', 'I tried authentic sushi and street food, and both were delicious.', 'I took lots of pictures and enjoyed the local atmosphere.', 'I still think about going back someday.'], korean: ['얼마 전에 일본에 갔는데 도쿄가 정말 좋았어요.', '꽃밭이 정말 인상적이었어요.', '현지 스시와 길거리 음식을 먹었는데 둘 다 맛있었어요.', '사진을 많이 찍고 현지 분위기를 즐겼어요.', '언젠가 다시 가고 싶다는 생각을 아직도 해요.'] },
+            { topic: '해외여행', type: '과거경험', question: '뉴욕 여행이 어땠는지 말해 보세요.', english: ['A lot of my friends have traveled to America, and I understand why after visiting New York.', 'The city was exciting, and there was something interesting everywhere I looked.', 'I tried local food and saw many famous places.', 'I felt amazed by the energy of the city.', 'It was a wonderful trip, and I would love to go back.'], korean: ['친구들이 미국에 많이 가는데 뉴욕에 다녀온 뒤 그 이유를 알겠어요.', '도시는 활기찼고 어디를 봐도 흥미로운 것이 있었어요.', '현지 음식을 먹고 유명한 장소도 많이 봤어요.', '도시의 에너지에 감탄했어요.', '정말 멋진 여행이었고 다시 가고 싶어요.'] },
+            { topic: '해외여행', type: '과거경험', question: '일본 여행이나 여행 중 생긴 문제를 말해 보세요.', english: ['When I went to Japan, the flower gardens really blew me away.', 'I also tried authentic sushi in Tokyo, and it was unforgettable.', 'On another trip, I suddenly needed to use the restroom, but there was no public restroom nearby.', 'I walked slowly until I found a cafe and felt so relieved afterward.', 'Those little moments are what make a trip memorable.'], korean: ['일본에 갔을 때 꽃밭이 정말 인상적이었어요.', '도쿄에서 현지 스시도 먹었는데 잊을 수 없었어요.', '다른 여행에서는 갑자기 화장실이 급했는데 근처에 공중화장실이 없었어요.', '카페를 찾을 때까지 천천히 걸었고 이후 정말 안도했어요.', '그런 작은 순간들이 여행을 기억에 남게 해요.'] },
+            { topic: '해외여행', type: '비교', question: '국내여행과 해외여행을 비교해 보세요.', english: ['Domestic trips are usually easier because I know the language and culture.', 'International trips take more planning, but they feel more adventurous.', 'I can discover new customs, food, and ways of life abroad.', 'For me, who I travel with is just as important as where I go.', 'Both kinds of trips help me relax and make memories.'], korean: ['국내여행은 언어와 문화를 알아서 보통 더 편해요.', '해외여행은 준비가 더 필요하지만 모험처럼 느껴져요.', '해외에서는 새로운 관습과 음식, 생활방식을 발견할 수 있어요.', '저에게는 어디로 가는지만큼 누구와 가는지도 중요해요.', '두 여행 모두 쉬고 추억을 만드는 데 도움이 돼요.'] },
+            { topic: '운동을 전혀 하지 않음', type: '묘사', question: '운동을 즐기지 않는 이유를 말해 보세요.', english: ['To be honest, I am not really into working out.', 'I do not enjoy intense exercise or going to the gym.', 'I prefer relaxing activities, like watching a movie at home.', 'I know being active is important, so I try to take short walks.', 'I choose light activities that feel comfortable for me.'], korean: ['솔직히 운동을 그다지 좋아하지 않아요.', '격한 운동이나 헬스장에 가는 걸 즐기지 않아요.', '집에서 영화를 보는 것처럼 편안한 활동을 더 좋아해요.', '활동적인 것이 중요하다는 걸 알아서 짧게 산책하려고 해요.', '저에게 편하게 느껴지는 가벼운 활동을 선택해요.'] },
+            { topic: '운동을 전혀 하지 않음', type: '습관', question: '운동 대신 평소 어떻게 건강을 관리하나요?', english: ['I do not have a regular workout routine.', 'Instead, I try to move around during my normal day.', 'I take the stairs or go for a short walk when I can.', 'I also try to get enough sleep and drink water.', 'Small habits are easier for me to keep up.'], korean: ['규칙적인 운동 루틴은 없어요.', '대신 일상에서 몸을 움직이려고 해요.', '가능하면 계단을 이용하거나 짧게 산책해요.', '잠을 충분히 자고 물도 마시려고 해요.', '작은 습관이 저에게는 더 지속하기 쉬워요.'] },
+            { topic: '운동을 전혀 하지 않음', type: '과거경험', question: '운동을 시작해 보려고 했던 경험을 말해 보세요.', english: ['I once tried to work out regularly because I wanted to get in shape.', 'At first, I went to the gym a few times a week.', 'I got tired very quickly and did not enjoy the intense exercises.', 'After a while, I stopped going and chose short walks instead.', 'I guess you can say that light activities suit me better.'], korean: ['몸을 만들고 싶어서 한때 규칙적으로 운동하려고 했어요.', '처음에는 일주일에 몇 번 헬스장에 갔어요.', '금방 지쳤고 격한 운동을 즐기지 못했어요.', '얼마 후 그만두고 대신 짧게 산책하기로 했어요.', '가벼운 활동이 저에게 더 잘 맞는다고 할 수 있어요.'] },
+            { topic: '운동을 전혀 하지 않음', type: '비교', question: '예전과 요즘 건강을 챙기는 방식을 비교해 보세요.', english: ['In the past, I did not think much about staying active.', 'These days, I try to take short walks instead of doing intense workouts.', 'It is a simple way to move without going to the gym.', 'I feel better when I do a little activity during the day.', 'I prefer this light routine because it is easy to continue.'], korean: ['예전에는 활동적으로 지내는 것에 대해 많이 생각하지 않았어요.', '요즘은 격한 운동 대신 짧게 산책하려고 해요.', '헬스장에 가지 않고도 몸을 움직일 수 있는 간단한 방법이에요.', '낮에 조금이라도 활동하면 기분이 더 좋아요.', '계속하기 쉬워서 이런 가벼운 루틴을 선호해요.'] },
+            { topic: '기타', type: '묘사', question: '현재 사는 집과 가장 좋아하는 방을 설명해 보세요.', english: ['I live in an apartment with my parents.', 'Our place is bright and spacious, with four rooms.', 'My favorite room is my bedroom because it is quiet and comfortable.', 'I have a computer, books, and a bed there.', 'I feel at home whenever I spend time in my room.'], korean: ['부모님과 아파트에 살아요.', '집은 밝고 넓으며 방이 네 개 있어요.', '가장 좋아하는 방은 조용하고 편안한 제 침실이에요.', '방에는 컴퓨터와 책, 침대가 있어요.', '방에서 시간을 보내면 집에 있다는 편안함을 느껴요.'] },
+            { topic: '기타', type: '묘사', question: '집의 방 구조와 가장 좋아하는 방을 설명해 보세요.', english: ['First of all, I live in an apartment with my parents.', 'There are four rooms: a living room, my parents\' room, my older sister\'s room, and mine.', 'The kitchen is connected to the living room, so it is convenient to move around.', 'What I really love about my home is my room.', 'It is not all that big, but it has everything I need, so I guess you can say it is my favorite place.'], korean: ['우선 부모님과 아파트에 살아요.', '거실, 부모님 방, 언니 방, 제 방까지 네 개의 방이 있어요.', '주방이 거실과 연결되어 있어 이동하기 편리해요.', '집에서 제가 정말 좋아하는 곳은 제 방이에요.', '아주 크지는 않지만 필요한 것이 다 있어서 제가 가장 좋아하는 곳이라고 할 수 있어요.'] },
+            { topic: '기타', type: '비교', question: '어렸을 때 살던 집과 지금 집을 비교해 보세요.', english: ['The house I lived in as a child was smaller than my current home.', 'I shared more space with my family back then.', 'Now I have my own room with a computer, books, and a bed.', 'My current place is brighter and more comfortable for me.', 'I like both homes because they remind me of different parts of my life.'], korean: ['어렸을 때 살던 집은 지금 집보다 작았어요.', '그때는 가족과 더 많은 공간을 함께 썼어요.', '지금은 컴퓨터와 책, 침대가 있는 제 방이 있어요.', '현재 집이 더 밝고 저에게 편안해요.', '서로 다른 시절을 떠올리게 해서 두 집 모두 좋아요.'] },
+            { topic: '기타', type: '습관', question: '평소 집안일과 가족의 역할을 말해 보세요.', english: ['I am usually busy on weekdays, so I do housework in the evening or on weekends.', 'I vacuum and mop the floor because my long hair gets everywhere, and my mom sometimes reminds me to clean it up.', 'I also walk my dog and feed her in the morning.', 'My mom prepares dinner, and my dad takes care of recycling.', 'That is how we share the housework in my family.'], korean: ['평일에는 보통 바빠서 저녁이나 주말에 집안일을 해요.', '긴 머리카락이 여기저기 떨어져 청소기로 청소하고 걸레질해요. 엄마가 치우라고 하시기도 해요.', '아침에는 강아지를 산책시키고 밥도 줘요.', '엄마는 저녁을 준비하고 아빠는 재활용을 맡아요.', '우리 가족은 이렇게 집안일을 나눠서 해요.'] },
+            { topic: '기타', type: '습관', question: '평소 어떤 집안일을 하나요?', english: ['I have to vacuum and mop the floor every day.', 'I have long hair, so there is hair all over the house.', 'It can be annoying, and my mom sometimes nags me about it.', 'I usually do the cleaning in the evening or on weekends.', 'That is why keeping the floor clean is part of my routine.'], korean: ['매일 청소기로 바닥을 청소하고 걸레질해야 해요.', '머리가 길어서 집안 곳곳에 머리카락이 있어요.', '귀찮을 때도 있고 엄마가 머리카락 때문에 잔소리를 하시기도 해요.', '보통 저녁이나 주말에 청소해요.', '그래서 바닥을 깨끗하게 하는 게 제 일과의 일부예요.'] },
+            { topic: '기타', type: '과거경험', question: '수업 중 급히 자리를 비워야 했던 경험을 말해 보세요.', english: ['One day, I was in an important class when I suddenly needed to use the restroom.', 'I did not want to miss the lesson because an exam was coming up.', 'But I was getting more and more uncomfortable, so I had to step out.', 'I walked quickly but carefully and came back as soon as I could.', 'I was relieved, and I was glad I did not miss too much.'], korean: ['어느 날 중요한 수업을 듣다가 갑자기 화장실이 급하게 필요했어요.', '시험이 다가와서 수업 내용을 놓치고 싶지 않았어요.', '하지만 점점 더 불편해져서 결국 밖으로 나가야 했어요.', '조심스럽게 서둘러 다녀왔고 가능한 빨리 돌아왔어요.', '안도했고 수업 내용을 많이 놓치지 않아 다행이었어요.'] },
+            { topic: '기타', type: '묘사', question: '우리 동네 카페는 어떤 곳이며 왜 좋아하나요?', english: ['There are many cafes and coffee shops in my neighborhood.', 'My favorite one is Mega Coffee, a Korean coffee chain.', 'It is clean and comfortable, and the prices are reasonable.', 'I can choose different kinds of milk, like soy milk or low-fat milk.', 'I guess you can say it is a convenient place to relax or study.'], korean: ['우리 동네에는 카페와 커피숍이 많아요.', '제가 가장 좋아하는 곳은 한국 커피 체인점인 메가커피예요.', '깨끗하고 편안하며 가격도 합리적이에요.', '두유나 저지방 우유처럼 다양한 우유를 고를 수 있어요.', '쉬거나 공부하기 편리한 곳이라고 할 수 있어요.'] },
+            { topic: '기타', type: '습관', question: '카페에 가면 무엇을 주문하고 무엇을 하나요?', english: ['I am a coffee person, and I usually order an iced Americano.', 'I often go to Mega Coffee because the prices are reasonable.', 'They have different milk options, which is convenient.', 'I usually talk with my friends or study there.', 'It is a comfortable place for a short break.'], korean: ['저는 커피를 좋아해서 아이스 아메리카노를 주로 주문해요.', '가격이 괜찮아서 메가커피에 자주 가요.', '여러 종류의 우유가 있어 편리해요.', '보통 친구와 이야기하거나 공부해요.', '잠깐 쉬기에 편안한 곳이에요.'] },
+            { topic: '기타', type: '과거경험', question: '날씨 때문에 계획이 바뀐 경험을 말해 보세요.', english: ['One day, I planned to go for a walk, but it started raining heavily.', 'I had not checked the weather before leaving home.', 'I got soaked and had to turn around and go back.', 'I felt annoyed at first, but later I thought it was a funny mistake.', 'Since then, I check the forecast before going out.'], korean: ['어느 날 산책을 하려 했는데 비가 많이 오기 시작했어요.', '집을 나서기 전에 날씨를 확인하지 않았어요.', '흠뻑 젖어서 돌아서 집에 가야 했어요.', '처음에는 짜증 났지만 나중에는 웃긴 실수라고 생각했어요.', '그 이후 외출 전에 일기예보를 확인해요.'] },
+            { topic: '기타', type: '과거경험', question: '하기 힘들었던 집안일 경험을 말해 보세요.', english: ['The hardest chore for me is cleaning the bathroom.', 'Last weekend, I found some mold on the bathroom tiles.', 'I had not noticed it before because it was hidden in a corner.', 'I asked my dad to remove it, and he used a mold cleaner.', 'It was unpleasant, but I was glad we solved the problem.'], korean: ['저에게 가장 힘든 집안일은 욕실 청소예요.', '지난 주말 욕실 타일에서 곰팡이를 발견했어요.', '구석에 숨어 있어서 전에는 알아차리지 못했어요.', '아빠에게 제거해 달라고 부탁했고 곰팡이 제거제를 사용하셨어요.', '불쾌했지만 문제를 해결해서 다행이었어요.'] },
+            { topic: '기타', type: '과거경험', question: '집에서 문제가 생긴 적이 있나요? 어떻게 해결했나요?', english: ['One time, one of our home appliances stopped working.', 'It made a strange noise, so we checked it right away.', 'My family decided to replace it with a newer one.', 'The new appliance worked much better and gave us more space.', 'I was glad we solved the problem before it got worse.'], korean: ['한번은 집에 있는 가전제품이 작동을 멈췄어요.', '이상한 소리가 나서 바로 확인했어요.', '가족은 더 새 제품으로 바꾸기로 했어요.', '새 가전제품은 더 잘 작동했고 공간도 더 넓게 쓸 수 있었어요.', '문제가 더 커지기 전에 해결해서 다행이었어요.'] },
+            { topic: '게임하기', type: '습관', question: '주말에 게임을 얼마나 오래 하고 어떤 게임을 모으고 싶나요?', english: ['I am a real gaming geek, and I love my PlayStation 5.', 'On weekends, I can play PlayStation games for about five hours a day.', 'I get really focused, and I want to get more PlayStation games.', 'Gaming is exciting and helps me reduce stress.', 'I guess you can say that gaming is my favorite way to relax.'], korean: ['저는 게임을 정말 좋아하고 플레이스테이션 5를 아껴요.', '주말에는 하루에 다섯 시간 정도 플레이스테이션 게임을 할 때도 있어요.', '게임에 정말 집중하고 플레이스테이션 게임도 더 많이 사고 싶어요.', '게임은 신나고 스트레스를 줄이는 데 도움이 돼요.', '게임이 제가 가장 좋아하는 휴식 방법이라고 할 수 있어요.'] },
+            { topic: '게임하기', type: '묘사', question: '게임할 때 어떤 점이 가장 재미있나요?', english: ['My favorite game is Sekiro.', 'The sound of the swords clashing feels very realistic.', 'It is a difficult game, so beating a boss takes a lot of practice.', 'I feel incredibly excited when I finally clear a hard stage.', 'That is why I keep challenging myself in the game.'], korean: ['제가 가장 좋아하는 게임은 세키로예요.', '칼끼리 부딪히는 소리가 아주 현실적으로 들려요.', '어려운 게임이라 보스를 깨려면 연습을 많이 해야 해요.', '어려운 단계를 마침내 깨면 정말 짜릿해요.', '그래서 게임에서 계속 도전하게 돼요.'] },
+            { topic: '기타', type: '묘사', question: '간단히 자기소개를 해 보세요.', english: ['Hi, I am an easygoing person and I live with my parents.', 'In my free time, I enjoy playing games, listening to music, and walking my puppy.', 'I like these activities because they help me relax.', 'I also enjoy spending quiet time at home.', 'I guess you can say that I like a simple and comfortable lifestyle.'], korean: ['안녕하세요, 저는 느긋한 성격이고 부모님과 함께 살아요.', '여가 시간에는 게임을 하고 음악을 듣고 강아지와 산책하는 걸 좋아해요.', '이런 활동은 긴장을 푸는 데 도움이 돼요.', '집에서 조용히 시간을 보내는 것도 좋아해요.', '소박하고 편안한 생활방식을 좋아한다고 할 수 있어요.'] },
+            { topic: '기타', type: '묘사', question: '여가 시간에 가장 즐겨 하는 활동을 말해 보세요.', english: ['In my free time, I usually play games or go for a walk with my puppy.', 'I enjoy gaming because it is exciting and helps me forget about stress.', 'Walking outside gives me fresh air and clears my mind.', 'I choose what to do depending on how I feel that day.', 'That is why these activities are my favorite ways to spend free time.'], korean: ['여가 시간에는 보통 게임을 하거나 강아지와 산책해요.', '게임은 신나고 스트레스를 잊게 해줘서 좋아해요.', '밖에서 걸으면 신선한 공기를 마시고 머리를 식힐 수 있어요.', '그날 기분에 따라 할 일을 골라요.', '그래서 이런 활동들이 제가 여가를 보내는 가장 좋아하는 방법이에요.'] },
+            { topic: '기타', type: '과거경험', question: '청소하다가 벌레를 발견한 경험을 말해 보세요.', english: ['Last weekend, I was cleaning the bathroom when I noticed a cockroach on the tile.', 'It had been hiding in the corner, so I had not seen it before.', 'I was so surprised that I screamed.', 'Then I asked my dad to take care of it because I was too scared.', 'I guess you can say it was one of the worst cleaning experiences I have had.'], korean: ['지난 주말 욕실을 청소하다 타일 위에서 바퀴벌레를 발견했어요.', '구석에 숨어 있어서 전에는 보지 못했어요.', '너무 놀라서 소리를 질렀어요.', '너무 무서워서 아빠에게 처리해 달라고 부탁했어요.', '제가 겪은 청소 경험 중 최악이었다고 할 수 있어요.'] },
+            { topic: '기타', type: '습관', question: '평소 이동할 때 어떤 교통수단을 이용하나요?', english: ['I usually use public transportation to get around.', 'I take the subway or bus depending on where I am going.', 'It is convenient because I do not have to worry about parking.', 'I can listen to music or check my phone during the ride.', 'That is why public transportation works well for me.'], korean: ['이동할 때 보통 대중교통을 이용해요.', '가는 곳에 따라 지하철이나 버스를 타요.', '주차 걱정을 하지 않아도 돼서 편리해요.', '이동 중 음악을 듣거나 휴대폰을 확인할 수도 있어요.', '그래서 대중교통이 저에게 잘 맞아요.'] },
+            { topic: '기타', type: '비교', question: '과거와 현재의 대중교통 이용을 비교해 보세요.', english: ['In the past, I did not use public transportation very often.', 'These days, I take the subway or bus to get around more.', 'Navigation apps make it much easier to plan a route.', 'I can also check arrival times on my phone.', 'It feels more convenient than it used to.'], korean: ['예전에는 대중교통을 자주 이용하지 않았어요.', '요즘은 이동할 때 지하철이나 버스를 더 자주 타요.', '길 안내 앱 덕분에 경로를 계획하기 쉬워졌어요.', '휴대폰으로 도착 시간도 확인할 수 있어요.', '예전보다 훨씬 편리하게 느껴져요.'] }
+        ];
+
+        function renderSttSentences(query = '') {
+            const container = document.getElementById('sttSentenceContainer');
+            if (!container) return;
+            const normalized = query.trim().toLowerCase();
+            container.innerHTML = '';
+            sttSentenceGroups.forEach((group, groupIndex) => {
+                const sentences = group.split('|').filter(sentence => sentence.toLowerCase().includes(normalized));
+                if (!sentences.length) return;
+                const section = document.createElement('section');
+                section.className = 'stt-group';
+                section.innerHTML = `<div class="stt-group-title">${sttTopics[groupIndex]} (${sentences.length})</div>`;
+                sentences.forEach(sentence => {
+                    const item = document.createElement('div');
+                    item.className = 'stt-item';
+                    item.onclick = () => item.classList.toggle('revealed');
+                    item.innerHTML = `<span class="stt-number">${sttSentences.indexOf(sentence) + 1}</span>${sentence}<div class="stt-meaning">클릭해서 문장을 숨기거나 다시 확인하세요.</div>`;
+                    section.appendChild(item);
+                });
+                container.appendChild(section);
+            });
+            document.getElementById('sttStatus').textContent = `${sttSentences.filter(sentence => sentence.toLowerCase().includes(normalized)).length}개 표시 / 전체 ${sttSentences.length}개`;
+        }
+
+        function filterSttSentences(query) {
+            renderSttSentences(query);
+        }
+
+        function filterSurveySearch(query) {
+            const normalized = query.trim().toLowerCase();
+            const items = [...document.querySelectorAll('#surveyExpressionContainer .survey-expression, #surveyExpressionContainer .stt-reference .stt-item')];
+            items.forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(normalized) ? '' : 'none';
+                const reference = item.closest('details');
+                if (reference && normalized) reference.open = item.style.display !== 'none';
+            });
+            const visible = items.filter(item => item.style.display !== 'none').length;
+            document.getElementById('sttStatus').textContent = `${visible}개 검색 결과 · ${surveyAnswerScripts.length}개 답변 / ${sttSentences.length}개 STT 참고`;
+        }
+
+        let selectedSurveyTopic = '전체';
+        let selectedSurveyType = '전체';
+
+        function getSurveyTopic(sentence) {
+            if (/Jeju|domestic trip|movie and drama scenes were filmed there|seafood there|within my country/i.test(sentence)) return '국내여행';
+            if (/movie|film|actor|actress|theater|cinema|screening|ticket booth|soundtrack|Oscar/i.test(sentence)) return '영화보기';
+            if (/concert|concert hall|live concert|singer|musician|MP3|song|music|melod|hip.?hop|classical|ballad|playlist/i.test(sentence)) return '음악감상하기';
+            if (/park|pond|hedge|grass|ex-girlfriend/i.test(sentence)) return '공원가기';
+            if (/beach|ocean|shore|swim|seafood there/i.test(sentence)) return '해변가기';
+            if (/game|PlayStation|Sekiro|Nintendo|gaming/i.test(sentence)) return '게임하기';
+            if (/jog|jogging|treadmill|work ?out|workout|gym|running shoes|weight training|exercise equipment/i.test(sentence)) return '조깅/걷기';
+            if (/Canada|Egypt|overseas|international trip|travel abroad|passport|pyramids|ancient buildings|travel guide|suitcase|toiletries|cosmetics|when I travel|to a trip/i.test(sentence)) return '해외여행';
+            if (/staycation|stay home|hotel|vacation|hocance/i.test(sentence)) return '집에서 보내는 휴가';
+            if (/apartment|my house|my room|my home|living room|closet|home appliance|sofa|refrigerator|bedroom/i.test(sentence)) return '기타';
+            return '기타';
+        }
+
+        function getSttType(sentence) {
+            if (/compared|these days|unlike|in the past|back then|when I was younger|since I was a child|used to|nowadays/i.test(sentence)) return '비교';
+            if (/one day|one time|once |visited|started|decided|got |was |were |had |ran |traveled|first time|since then|last year|when I first|I went|I saw|I found/i.test(sentence)) return '과거경험';
+            if (/usually|always|often|every|whenever|I go |I use |I like to|I spend|I pack|I try to/i.test(sentence)) return '습관';
+            return '묘사';
+        }
+
+        function addAnswerConclusion(script, scriptIndex) {
+            const english = [...script.english];
+            const korean = [...script.korean];
+            const lastIndex = english.length - 1;
+            if (lastIndex < 0) return { english, korean };
+
+            const conclusionStyles = [
+                { en: 'That is why', ko: '그래서' },
+                { en: 'I guess you can say that', ko: '제 생각에는' },
+                { en: 'So overall,', ko: '전반적으로 보면' },
+                { en: 'For that reason,', ko: '그런 이유로' },
+                { en: 'All in all,', ko: '결론적으로' }
+            ];
+            const style = conclusionStyles[Math.abs(scriptIndex) % conclusionStyles.length];
+            const englishBody = english[lastIndex]
+                .replace(/^(?:and\s+)?(?:that is why|that's why|i guess you can say that|so overall|for that reason|all in all)[,:]?\s*/i, '')
+                .replace(/[.!?]+$/, '');
+            const koreanBody = korean[lastIndex]
+                .replace(/^(?:그래서|그런 이유로|전반적으로 보면|결론적으로|이렇게 말할 수 있을 것 같아요[.!]?\s*)\s*/, '')
+                .replace(/[.!?]+$/, '');
+            const properNameStart = /^(?:I\b|Mrs\.|Jeju\b|Your Name\b|The Odyssey\b|Sekiro\b|PlayStation\b|Eunyeoul\b|Canada\b|Japan\b|New York\b)/;
+            const conclusionBody = properNameStart.test(englishBody)
+                ? englishBody
+                : `${englishBody.charAt(0).toLowerCase()}${englishBody.slice(1)}`;
+            english[lastIndex] = `${style.en} ${conclusionBody}.`;
+            const koreanPrefix = style.ko.endsWith(' ') ? style.ko : `${style.ko} `;
+            korean[lastIndex] = `${koreanPrefix}${koreanBody}.`;
+            return { english, korean };
+        }
+
+        function renderSurveySttGroups() {
+            const topicFilter = document.getElementById('surveyTopicFilters');
+            const typeFilter = document.getElementById('surveyTypeFilters');
+            const guide = document.getElementById('surveyQuestionGuide');
+            const container = document.getElementById('surveyExpressionContainer');
+            if (!topicFilter || !typeFilter || !container) return;
+            topicFilter.innerHTML = ['전체', ...surveyTopicGroups.map(group => group.topic)].map(topic => `<button class="filter-btn ${selectedSurveyTopic === topic ? 'active' : ''}" onclick="filterSurveyTopic('${topic}')">${topic}</button>`).join('');
+            typeFilter.innerHTML = ['전체', '묘사', '습관', '과거경험', '비교'].map(type => `<button class="filter-btn ${selectedSurveyType === type ? 'active' : ''}" onclick="filterSurveyType('${type}')">${type}</button>`).join('');
+            guide.innerHTML = `<div class="survey-question"><strong>답변 구성:</strong> 묘사 2문장 + 느낌/이유 1~2문장 + 마무리 1문장을 목표로 했습니다. 콤보는 보통 묘사·습관·과거경험·비교로 이어집니다.<br><strong>질문 프레임:</strong> 묘사 "Tell me about ..." · 습관 "What do you usually do ...?" · 경험 "Tell me about a memorable experience ..." · 비교 "How is it different from the past?"<br>야외 경험 스크립트는 공원·해변·여행에 바꿔 쓸 수 있고, 수업 중 경험은 기타에서 확인하세요. 11~13번 롤플레이 답변은 기존 롤플레이 탭에서 연습하세요.</div>`;
+            container.innerHTML = surveyTopicGroups.map(group => {
+                if (selectedSurveyTopic !== '전체' && selectedSurveyTopic !== group.topic) return '';
+                const sttItems = sttSentences.filter(sentence => getSurveyTopic(sentence) === group.topic);
+                const typeSections = ['묘사', '습관', '과거경험', '비교'].map(type => {
+                    const scripts = surveyAnswerScripts.filter(item => item.topic === group.topic && item.type === type);
+                    const references = sttItems.filter(sentence => getSttType(sentence) === type);
+                    if (selectedSurveyType !== '전체' && selectedSurveyType !== type) return '';
+                    const scriptHtml = scripts.map(script => {
+                        const answer = addAnswerConclusion(script, surveyAnswerScripts.indexOf(script));
+                        return `<article class="answer-script survey-expression"><div class="answer-script-question">Q. ${script.question}</div><div class="script-tag">${answer.english.length}문장 스크립트</div><div class="answer-script-lines">${answer.english.map((line, index) => `<p>${index + 1}. ${line.replace(/\bwant to\b/gi, 'wanna')}</p>`).join('')}</div><div class="answer-script-meaning">${answer.korean.map((line, index) => `<p>${index + 1}. ${line}</p>`).join('')}</div></article>`;
+                    }).join('');
+                    const referenceHtml = references.length ? `<details class="stt-reference"><summary>원문 STT 참고 표현 ${references.length}개</summary>${references.map(sentence => `<div class="stt-item"><span class="stt-number">${sttSentences.indexOf(sentence) + 1}</span>${sentence}</div>`).join('')}</details>` : '';
+                    return `<div class="survey-type"><div class="survey-type-title">${type} · ${scripts.length}개 답변</div>${scriptHtml || '<div class="answer-script-meaning" style="display:block;padding:12px 15px;">준비된 스크립트는 아직 없습니다. STT 참고 표현을 활용해 보세요.</div>'}${referenceHtml}</div>`;
+                }).join('');
+                return `<section class="survey-topic"><div class="survey-topic-title">${group.topic}</div>${typeSections}</section>`;
+            }).join('');
+        }
+
+        function filterSurveyTopic(topic) {
+            selectedSurveyTopic = topic;
+            renderSurveySttGroups();
+        }
+
+        function filterSurveyType(type) {
+            selectedSurveyType = type;
+            renderSurveySttGroups();
+        }
+
         window.onload = function() {
             buildFilterButtons('patternFilter', renderPatterns, true);
             buildFilterButtons('memoryFilter', loadMemoryCards, false);
             renderPatterns('all');
             document.getElementById('patternsContainer').dataset.loaded = '1';
+            document.getElementById('sttStatus').textContent = `${surveyAnswerScripts.length}개 답변 / ${sttSentences.length}개 STT 참고`;
         };
     </script>
 </body>
