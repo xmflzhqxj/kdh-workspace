@@ -6,5 +6,5 @@ echo =========================================
 echo.
 echo Running the program...
 echo.
-python transcribe.py
+"%~dp0..\venv\Scripts\python.exe" "%~dp0transcribe.py"
 pause

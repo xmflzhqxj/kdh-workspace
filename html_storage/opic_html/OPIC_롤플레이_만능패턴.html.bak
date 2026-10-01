@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPIc 롤플레이 만능패턴 마스터</title>
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-light: #6366f1;
+        --primary-dark: #3730a3;
+        --secondary: #7c3aed;
+        --accent: #06b6d4;
+        --bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --success: #10b981;
+        --success-bg: #ecfdf5;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --warning-bg: #fffbeb;
+        --radius-sm: 8px;
+        --radius-md: 14px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', Roboto, 'Noto Sans KR', sans-serif;
+        background-color: var(--bg);
+        color: var(--text-main);
+        line-height: 1.6;
+        padding-bottom: 60px;
+    }
+
+    header {
+        background: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #7c3aed 100%);
+        color: white;
+        padding: 36px 20px 28px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.25);
+    }
+
+    h1 { font-size: 2.1em; font-weight: 800; margin-bottom: 8px; }
+
+    .header-sub { font-size: 0.98em; opacity: 0.92; max-width: 820px; margin: 0 auto; }
+
+    .header-flow {
+        margin-top: 16px;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-size: 0.85em;
+    }
+
+    .header-flow span {
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+    }
+
+    .nav-wrapper {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(255,255,255,0.96);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        gap: 8px;
+        padding: 10px 20px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .nav-container::-webkit-scrollbar { display: none; }
+
+    .main-tab-btn {
+        background: transparent;
+        color: var(--text-muted);
+        border: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.92em;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+
+    .main-tab-btn:hover { color: var(--primary); background: #eef2ff; }
+
+    .main-tab-btn.active {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .container { max-width: 1200px; margin: 26px auto; padding: 0 20px; }
+
+    .tab-pane { display: none; animation: fadeIn 0.3s ease-in; }
+    .tab-pane.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .card-title {
+        font-size: 1.25em;
+        font-weight: 800;
+        color: var(--primary-dark);
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eef2ff;
+    }
+
+    .category-filter {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .filter-btn {
+        background: #f1f5f9;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        padding: 7px 14px;
+        border-radius: 20px;
+        font-size: 0.82em;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    /* 패턴 카드 (Korean cue -> click reveals English pattern) */
+    .pattern-card {
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        border-left: 5px solid var(--primary);
+        border-radius: var(--radius-sm);
+        padding: 18px 20px;
+        margin-bottom: 16px;
+    }
+
+    .pattern-kr {
+        font-weight: 800;
+        color: var(--text-main);
+        font-size: 1.1em;
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+
+    .pattern-en {
+        font-weight: 700;
+        color: var(--primary-dark);
+        font-size: 1.1em;
+        margin-top: 6px;
+        line-height: 1.6;
+    }
+
+    .example-list { margin-top: 6px; }
+
+    .example-item {
+        background: white;
+        border-left: 3px solid var(--accent);
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin-bottom: 8px;
+    }
+
+    .example-en {
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 1em;
+        line-height: 1.5;
+    }
+
+    .example-ko {
+        color: var(--text-muted);
+        font-size: 0.88em;
+        margin-top: 4px;
+    }
+
+    /* 토글 암기 모드 (flip card, 패턴 문장만) */
+    .flip-card {
+        background: white;
+        border: 2px solid var(--accent);
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .flip-card:hover { box-shadow: 0 4px 15px rgba(79, 70, 229, 0.15); transform: translateY(-2px); }
+
+    .flip-card.korean { background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 100%); border-color: var(--accent); }
+    .flip-card.english { background: linear-gradient(135deg, #f0fdf4 0%, #f5feff 100%); border-color: var(--success); }
+
+    .flip-text { font-size: 1.08em; font-weight: 700; text-align: center; line-height: 1.6; }
+    .flip-card.korean .flip-text { color: var(--primary-dark); }
+    .flip-card.english .flip-text { color: var(--success); font-size: 1.08em; }
+
+    .flip-hint { font-size: 0.72em; color: var(--text-muted); margin-top: 8px; font-weight: 600; }
+
+    /* 전체 한눈에 보기 */
+    .overview-group {
+        background: #f8fafc;
+        border-left: 4px solid var(--secondary);
+        padding: 18px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .overview-title {
+        font-weight: 800;
+        color: var(--primary-dark);
+        margin-bottom: 12px;
+        font-size: 1.05em;
+    }
+
+    .overview-item {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin-bottom: 8px;
+    }
+
+    .overview-pattern {
+        font-weight: 700;
+        color: var(--primary-dark);
+        font-size: 1em;
+        margin-bottom: 8px;
+        line-height: 1.5;
+    }
+
+    .overview-ex {
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.95em;
+        margin: 4px 0;
+        line-height: 1.5;
+    }
+
+    .overview-ex-ko {
+        color: var(--text-muted);
+        font-size: 0.88em;
+        margin-bottom: 8px;
+    }
+
+    .flow-note {
+        background: #eff6ff;
+        border-left: 5px solid #3b82f6;
+        color: #1e40af;
+        padding: 14px 18px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.92em;
+    }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        color: var(--text-muted);
+        font-size: 0.88em;
+        margin-top: 30px;
+        border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+        .main-tab-btn { padding: 8px 12px; font-size: 0.8em; }
+        h1 { font-size: 1.6em; }
+    }
+</style>
+</head>
+<body>
+    <header>
+        <h1>🎤 OPIc 롤플레이 만능패턴 마스터</h1>
+        <p class="header-sub">11번(질문 2~4개) → 12번(불참/취소 통보 + 대안 제시) → 13번(과거 유사 경험) 콤보를 상황·시간·장소만 바꿔서 재사용하기 위한 패턴 모음</p>
+        <div class="header-flow">
+            <span>11번: 정보 질문하기</span>
+            <span>12번: 문제제기 · 취소/일정조정 · 대안제시</span>
+            <span>13번: 과거 유사 경험</span>
+        </div>
+    </header>
+
+    <div class="nav-wrapper">
+        <div class="nav-container">
+            <button class="main-tab-btn active" onclick="switchTab('patterns')">📖 패턴 + 예문</button>
+            <button class="main-tab-btn" onclick="switchTab('memory')">🧠 토글 암기</button>
+            <button class="main-tab-btn" onclick="switchTab('overview')">📋 전체 한눈에</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 1. 패턴 + 예문 보기 -->
+        <div id="patterns" class="tab-pane active">
+            <div class="card">
+                <div class="card-title">📖 카테고리별 패턴 + 예문</div>
+                <div class="flow-note">💡 한국어 뜻을 먼저 떠올려보고, 점선 박스를 클릭해 영어 패턴을 확인하세요. 예문은 상황(장소/시간/대상)만 바꿔서 실전에 그대로 응용하면 됩니다.</div>
+
+                <div class="category-filter" id="patternFilter"></div>
+                <div id="patternsContainer"></div>
+            </div>
+        </div>
+
+        <!-- 2. 토글 암기 -->
+        <div id="memory" class="tab-pane">
+            <div class="card">
+                <div class="card-title">🧠 토글식 암기 - 클릭해서 보기/숨기기</div>
+                <div class="flow-note">💡 한국어 뜻만 보이는 카드를 클릭하면 영어 패턴이 나타났다 다시 사라집니다. 예문 없이 핵심 패턴 문장만 빠르게 반복하세요.</div>
+
+                <div class="category-filter" id="memoryFilter"></div>
+                <div id="memoryCardsContainer"></div>
+            </div>
+        </div>
+
+        <!-- 3. 전체 한눈에 보기 -->
+        <div id="overview" class="tab-pane">
+            <div class="card">
+                <div class="card-title">📋 전체 표현 한눈에 보기</div>
+                <div class="flow-note">💡 왔다갔다 하면서 훑어볼 때 이 탭을 사용하세요. 카테고리 순서가 곧 11→12→13번 답변 흐름입니다.</div>
+                <div id="overviewContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>🎤 OPIc 롤플레이 만능패턴 마스터</p>
+        <p style="margin-top: 6px;">10개 카테고리 · 패턴 문장 암기 후 장소/시간/대상만 바꿔서 응용하기</p>
+    </footer>
+
+    <script>
+        const categories = [
+            { key: 'greeting', label: '🗣️ 대화 시작' },
+            { key: 'question', label: '❓ 정보 질문' },
+            { key: 'schedule_question', label: '📅 일정 확인' },
+            { key: 'problem', label: '⚠️ 문제 제기' },
+            { key: 'solution_request', label: '🛠️ 해결 요청' },
+            { key: 'alternative', label: '💡 대안 제시' },
+            { key: 'reschedule', label: '🔄 일정조정/취소' },
+            { key: 'confirm', label: '✅ 동의 확인' },
+            { key: 'past_experience', label: '🕘 과거 경험(13번)' },
+            { key: 'closing', label: '👋 마무리 인사' },
+            { key: 'emotions', label: '😊 감정 표현' },
+            { key: 'survey', label: '☀️ 일반 주제(서베이)' }
+        ];
+
+        const roleplayData = {
+            greeting: {
+                title: '🗣️ 대화 시작하기 (인사 & 상황 설명)',
+                items: [
+                    {
+                        kr: '잘 지내? (아는 사람에게 캐주얼한 인사)',
+                        en: "Hi, how's it going?",
+                        examples: [
+                            { en: "Hi, how's it going?", ko: '잘 지내? (친한 사이 인사)' }
+                        ]
+                    },
+                    {
+                        kr: '모르는 사람에게 인사하며 찾는 물건 말하기',
+                        en: "Hi there. I'm looking for a sofa for 3 people.",
+                        examples: [
+                            { en: "Hi there. I'm looking for a sofa for 3 people.", ko: '안녕하세요. 3인용 소파를 찾고 있는데요' }
+                        ]
+                    },
+                    {
+                        kr: '전문가에게 예약을 요청하며 대화 시작하기 (appointment)',
+                        en: "Hi there. I'd like to make an appointment with Dr. Kim.",
+                        examples: [
+                            { en: "Hi there. I'd like to make an appointment with Dr. Kim.", ko: '안녕하세요. Kim 선생님께 예약을 하고 싶습니다' }
+                        ]
+                    },
+                    {
+                        kr: '문제를 알게 된 상황으로 대화 시작하기',
+                        en: 'Hi there. I bought a sofa a few days ago and noticed that there was a problem with it.',
+                        examples: [
+                            { en: 'Hi there. I bought a sofa a few days ago and noticed that there was a problem with it.', ko: '며칠 전에 소파를 샀는데 문제가 있다는 걸 알게 됐어요' },
+                            { en: "I've just found out that something's wrong with it.", ko: '뭔가 문제가 있다는 것을 방금 알게 됐어요' }
+                        ]
+                    }
+                ]
+            },
+            question: {
+                title: '❓ 질문하기 - 정보 확인 (11번, 육하원칙)',
+                items: [
+                    { kr: '어디서 샀는지 물어보기', en: 'Where did you get it?', examples: [{ en: 'Where did you get it?', ko: '어디서 샀어?' }] },
+                    { kr: '특정 색상/사이즈가 있는지 물어보기', en: 'Does it come in white?', examples: [{ en: 'Does it come in white?', ko: '흰색도 있어? (물건의 특정 컬러/사이즈 여부를 물을 때)' }] },
+                    { kr: '제일 잘 나가는 상품 물어보기', en: 'What is the best-selling item?', examples: [{ en: 'What is the best-selling item?', ko: '제일 잘나가는 게 뭐예요?' }] },
+                    { kr: '전시 상품밖에 없는지 물어보기', en: 'Only the display?', examples: [{ en: 'Only the display?', ko: '디피 상품밖에 없어요?' }] },
+                    { kr: '가격과 포함 내역 물어보기', en: 'How much does that cost and what does it include?', examples: [{ en: 'How much does that cost and what does it include?', ko: '얼마이고 뭐가 포함되나요?' }] },
+                    { kr: '프로모션/할인 여부 물어보기', en: 'Do you have any promotions or deals?', examples: [{ en: 'Do you have any promotions or deals?', ko: '프로모션이나 할인 있나요?' }] },
+                    { kr: '영업시간 물어보기', en: 'What are your hours of operation?', examples: [{ en: 'What are your hours of operation?', ko: '영업시간이 어떻게 되나요?' }] },
+                    { kr: '학생 할인 여부 물어보기', en: 'Can I get a student discount?', examples: [{ en: 'Can I get a student discount?', ko: '학생 할인 받을 수 있나요?' }] },
+                    { kr: '카드 결제 가능 여부 확인하기', en: "I'll be paying with a card. Is this okay?", examples: [{ en: "I'll be paying with a card. Is this okay?", ko: '카드로 결제할게요. 괜찮을까요?' }] }
+                ]
+            },
+            schedule_question: {
+                title: '📅 일정/예약 가능 여부 확인하기',
+                items: [
+                    { kr: '이번 주말에 시간 있는지 물어보기', en: 'Do you have time this weekend?', examples: [{ en: 'Do you have time this weekend?', ko: '이번 주말에 시간 있어?' }] },
+                    { kr: '특정 요일에 가능한지 물어보기', en: "Are you available next Friday? I'm off that day.", examples: [{ en: "Are you available next Friday? I'm off that day.", ko: '다음 주 금요일 가능해? 나는 그날 쉬어' }] },
+                    { kr: '내일 특정 시간에 진료 가능한지 물어보기', en: 'Could I see the doctor at 12 tomorrow?', examples: [{ en: 'Could I see the doctor at 12 tomorrow?', ko: '내일 12시에 진료 볼 수 있을까요?' }] },
+                    { kr: '특정 시간 이후에 가능한 시간이 있는지 물어보기', en: 'Is there anything available after 6 pm?', examples: [{ en: 'Is there anything available after 6 pm?', ko: '오후 6시 이후에 가능한 시간 있나요?' }] }
+                ]
+            },
+            problem: {
+                title: '⚠️ 문제 제기하기 (12번 - 물건/서비스에 문제 발견)',
+                items: [
+                    {
+                        kr: '물건/서비스에 문제가 있음을 알아차렸을 때',
+                        en: 'I noticed that there was a problem with it.',
+                        examples: [
+                            { en: 'I ordered this chair online and noticed that there was a problem with one of the legs.', ko: '온라인으로 이 의자를 주문했는데 다리 하나에 문제가 있다는 걸 알아차렸어요' },
+                            { en: "I've just found out that something's wrong with it.", ko: '뭔가 문제가 있다는 것을 방금 알게 됐어요' }
+                        ]
+                    },
+                    {
+                        kr: '기대했던 것과 달라 실망했을 때',
+                        en: "I was really looking forward to a nice and clean stay, so I'm a bit disappointed.",
+                        examples: [
+                            { en: "I was really looking forward to a nice and clean stay, so I'm a bit disappointed.", ko: '깨끗하고 좋은 숙박을 정말 기대했었는데, 그래서 조금 실망했어요' }
+                        ]
+                    }
+                ]
+            },
+            solution_request: {
+                title: '🛠️ 해결 요청하기 (12번 - 상대방에게 해결을 요청)',
+                items: [
+                    { kr: '해결 방법이 있는지 요청하기', en: 'Is there anything we can do to fix this?', examples: [{ en: 'Is there anything we can do to fix this?', ko: '이 문제를 해결할 방법이 있을까요?' }] },
+                    { kr: '새 것으로 교환 요청하기', en: 'Could you exchange it for a new one?', examples: [{ en: 'Could you exchange it for a new one?', ko: '새 것으로 교환해 주실 수 있나요?' }] },
+                    { kr: '환불 요청하기', en: "Then I'd like to get a refund, please.", examples: [{ en: "Then I'd like to get a refund, please.", ko: '그럼 환불받고 싶어요' }] }
+                ]
+            },
+            alternative: {
+                title: '💡 대안 제시하기 (12번 핵심)',
+                items: [
+                    {
+                        kr: '대안(여러 개)을 제안할 때',
+                        en: "I'd like to suggest a few alternatives.",
+                        examples: [
+                            { en: "To make up for this, I'd like to suggest a few alternatives.", ko: '이를 만회하기 위해 몇 가지 대안을 제안하고 싶어요' },
+                            { en: "I'd like to suggest a couple of other options for the trip.", ko: '여행에 대한 다른 옵션 몇 가지를 제안하고 싶어요' },
+                            { en: 'I was thinking of a few ways to solve the problem.', ko: '문제를 해결할 몇 가지 방법을 생각해봤어요' }
+                        ]
+                    },
+                    {
+                        kr: '구체적인 대안 하나를 제안할 때 (~할래?)',
+                        en: 'Do you wanna ~?',
+                        examples: [
+                            { en: 'Do you wanna go to the Apple store to pick out a new one?', ko: '친구 물건을 망가뜨렸을 때: 새 걸로 고르러 애플스토어 갈래?' },
+                            { en: 'Do you wanna go grab some coffee before the movie starts?', ko: '친구와 영화관에 온 상황: 영화 시작 전에 커피 마시러 갈래?' },
+                            { en: 'Do you wanna come over and study together this weekend?', ko: '이번 주말에 와서 같이 공부할래?' }
+                        ]
+                    },
+                    {
+                        kr: '다른 대안을 제안할 때 (~하는 게 어때?)',
+                        en: 'How about ~?',
+                        examples: [
+                            { en: "How about Saturday at 1 pm? They mentioned they don't have any plans for Saturday.", ko: '토요일 1시 어때? 그들이 토요일에 아무 계획 없다고 했어' },
+                            { en: 'How about we try that new restaurant instead?', ko: '대신 새로 생긴 식당 가보는 건 어때?' },
+                            { en: 'How about meeting at the subway station this time?', ko: '이번엔 지하철역에서 만나는 게 어때?' }
+                        ]
+                    }
+                ]
+            },
+            reschedule: {
+                title: '🔄 일정 조정 및 취소 요청하기 (12번 핵심)',
+                items: [
+                    {
+                        kr: '예약/일정 조정 요청하기 (전문가 예약 - appointment)',
+                        en: 'Could I please reschedule my appointment?',
+                        examples: [
+                            { en: "I'm supposed to see Doctor Kim at 7 pm today, but something came up, and I won't be able to make it. So could I please reschedule my appointment?", ko: '오늘 7시에 Kim 선생님을 뵙기로 했는데 일이 생겨서 못 갈 것 같아요. 예약을 조정해도 될까요?' },
+                            { en: 'Could I please reschedule our meeting to next Monday?', ko: '저희 미팅을 다음 주 월요일로 조정해도 될까요?' }
+                        ]
+                    },
+                    {
+                        kr: '시간을 조금 미루자고 제안하기 (=delay)',
+                        en: 'We could push back the time a little.',
+                        examples: [
+                            { en: 'If you really want me to pick you up, we could push back the time a little.', ko: '네가 정말 나더러 데리러 오길 원한다면, 시간을 조금 미룰 수 있어 (친구를 데리러 가야 하는 상황)' },
+                            { en: 'Maybe we could push back the meeting to 3 pm instead.', ko: '미팅을 오후 3시로 미루는 게 어떨까' }
+                        ]
+                    },
+                    {
+                        kr: '사정이 생겨 못 간다고 통보하기 (불참 통보)',
+                        en: "Something came up, and I won't be able to make it.",
+                        examples: [
+                            { en: "I'm supposed to see Doctor Kim at 7 pm today, but something came up, and I won't be able to make it.", ko: '오늘 7시 Kim 선생님과 약속이 있었는데 일이 생겨서 못 갈 것 같아요' },
+                            { en: "I was supposed to meet you at 6, but something came up, and I won't be able to make it.", ko: '6시에 만나기로 했었는데 일이 생겨서 못 갈 것 같아' },
+                            { en: "I know we have plans to meet up at 12 for lunch, but I don't think I can make it.", ko: '12시에 점심 먹기로 한 거 알지만 아무래도 못 갈 것 같아' }
+                        ]
+                    },
+                    {
+                        kr: '다음으로 미루자고 완곡하게 제안하기',
+                        en: 'Can we take a rain check?',
+                        examples: [
+                            { en: 'Can we take a rain check? I mean, I think it would be better to reschedule.', ko: '다음에 다시 만날 수 있을까? 그러니까 일정을 다시 잡는 게 좋을 것 같아' }
+                        ]
+                    }
+                ]
+            },
+            confirm: {
+                title: '✅ 제안 후 동의 확인하기',
+                items: [
+                    {
+                        kr: '제안한 뒤 상대방이 괜찮은지 확인하기',
+                        en: 'Would that work for you?',
+                        examples: [
+                            { en: 'How about Saturday at 1 pm? Would that work for you?', ko: '토요일 1시 어때? 그렇게 해도 괜찮아?' },
+                            { en: 'I was thinking Friday evening. Would that work for you?', ko: '금요일 저녁 생각하고 있었는데, 괜찮아?' },
+                            { en: 'We could meet at the cafe near the station. Would that work for you?', ko: '역 근처 카페에서 만나는 거 어때? 괜찮아?' }
+                        ]
+                    }
+                ]
+            },
+            past_experience: {
+                title: '🕘 과거 유사 경험 말하기 (13번 - "이런 경우가 있었냐" 질문)',
+                items: [
+                    {
+                        kr: '전화/이메일로 취소·일정 변경 가능한지 물어봤던 경험 말하기',
+                        en: 'I called and asked if I could cancel or reschedule.',
+                        examples: [
+                            { en: 'So I called the dental clinic and asked if I could cancel or reschedule.', ko: '그래서 치과에 전화해서 취소하거나 일정을 변경할 수 있는지 물어봤어요' },
+                            { en: 'I emailed the hotel and asked if I could cancel the reservation.', ko: '호텔에 이메일을 보내서 예약을 취소할 수 있는지 물어봤어요' }
+                        ]
+                    }
+                ]
+            },
+            closing: {
+                title: '👋 마무리 인사하기',
+                items: [
+                    { kr: '실망스러운 상황에 대한 감정 표현', en: "That's a bummer.", examples: [{ en: "That's a bummer.", ko: '아쉽네(실망이다) - 계획이 무산되거나 기대와 다르게 풀릴 때' }] },
+                    { kr: '도움받은 후 마무리 인사', en: 'That was really helpful. Talk to you later.', examples: [{ en: 'That was really helpful. Talk to you later.', ko: '정말 도움이 됐어요. 나중에 얘기해요 (도움받은 상황 마무리 인사)' }] },
+                    {
+                        kr: '메시지를 남기고 마무리하기',
+                        en: 'Let me know what you think.',
+                        examples: [
+                            { en: 'Let me know what you think.', ko: '어떻게 생각하는지 알려줘 (메시지 남기는 롤플레이에서 제안 후 마무리)' },
+                            { en: 'Please call me back when you get this message. Bye.', ko: '이 메시지 받으면 다시 전화 줘. 안녕 (마무리 멘트)' }
+                        ]
+                    },
+                    { kr: '사과와 함께 보상을 제안하며 마무리하기', en: "I'm so sorry again. I'll buy you lunch next week.", examples: [{ en: "I'm so sorry again. I'll buy you lunch next week.", ko: '다시 한번 정말 미안해. 다음 주에 점심 살게' }] }
+                ]
+            },
+            emotions: {
+                title: '😊 감정 표현 (행복·감동·놀람·짜증·긴장)',
+                items: [
+                    { kr: '정말 행복했다 (strong expression)', en: 'I was completely over the moon.', examples: [{ en: 'I was completely over the moon.', ko: '정말 기뻤다' }] },
+                    { kr: '일주일 내내 행복했다', en: 'I was on cloud nine for the whole week.', examples: [{ en: 'I was on cloud nine for the whole week.', ko: '일주일 내내 행복했다' }] },
+                    { kr: '기쁘다 (neutral)', en: 'I was really happy.', examples: [{ en: 'I was really happy.', ko: '기쁘다' }, { en: 'I felt so good.', ko: '기분이 정말 좋았다' }] },
+                    { kr: '감동했다', en: 'I was really touched.', examples: [{ en: 'I was really touched.', ko: '정말 감동했다' }, { en: 'I got emotional.', ko: '감정적이 됐다' }] },
+                    { kr: '놀랐다', en: 'I was surprised.', examples: [{ en: 'I was surprised.', ko: '놀랐다' }, { en: 'I was really impressed.', ko: '정말 감탄했다' }] },
+                    { kr: '짜증났다·실망했다', en: 'I was really annoyed.', examples: [{ en: 'I was really annoyed.', ko: '짜증났다' }, { en: 'I was disappointed.', ko: '실망했다' }] },
+                    { kr: '긴장했다·당황했다', en: 'I was really nervous.', examples: [{ en: 'I was really nervous.', ko: '정말 긴장했다' }, { en: 'It was a little weird.', ko: '좀 당황스러웠다' }] }
+                ]
+            },
+            survey: {
+                title: '☀️ 일반 주제 표현 (서베이·주제 발화)',
+                items: [
+                    {
+                        kr: '날씨 - 묘사',
+                        en: 'During the summer, the weather is very hot in my country.',
+                        examples: [
+                            { en: 'During the summer, the weather is very hot in my country.', ko: '여름에는 우리나라 날씨가 매우 덥다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 - 습관',
+                        en: 'During the rainy season, I check the weather forecast.',
+                        examples: [
+                            { en: 'During the rainy season, I check the weather forecast.', ko: '비오는 계절에는 날씨 예보를 확인한다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 - 과거 경험',
+                        en: "During the fall, I once went hiking with my poppy.",
+                        examples: [
+                            { en: "During the fall, I once went hiking with my poppy.", ko: '가을에 한 번 아버지와 등산을 갔다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 - 비교',
+                        en: "But these days, during the summer, it's very humid.",
+                        examples: [
+                            { en: "But these days, during the summer, it's very humid.", ko: '하지만 요즘 여름에는 습도가 높다' }
+                        ]
+                    },
+                    {
+                        kr: '귀찮은 일 - 묘사',
+                        en: 'Carrying an umbrella is a hassle on rainy days.',
+                        examples: [
+                            { en: 'Carrying an umbrella is a hassle on rainy days.', ko: '비오는 날 우산 들고 다니는 건 귀찮다' }
+                        ]
+                    },
+                    {
+                        kr: '귀찮은 일 - 습관',
+                        en: "It's a hassle, but I carry an umbrella.",
+                        examples: [
+                            { en: "It's a hassle, but I carry an umbrella.", ko: '귀찮지만 우산을 들고 다닌다' }
+                        ]
+                    },
+                    {
+                        kr: '귀찮은 일 - 과거 경험',
+                        en: "I once looked for a taxi in the rain. It was a hassle.",
+                        examples: [
+                            { en: "I once looked for a taxi in the rain. It was a hassle.", ko: '한 번 빗속에서 택시를 찾은 적이 있다. 정말 귀찮았다' }
+                        ]
+                    },
+                    {
+                        kr: '귀찮은 일 - 비교',
+                        en: "But these days, it's a hassle to carry an umbrella.",
+                        examples: [
+                            { en: "But these days, it's a hassle to carry an umbrella.", ko: '요즘엔 우산 들고 다니는 게 귀찮다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 예보 - 묘사',
+                        en: 'The weather forecast is very accurate these days.',
+                        examples: [
+                            { en: 'The weather forecast is very accurate these days.', ko: '요즘 날씨 예보가 정확하다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 예보 - 습관',
+                        en: 'I always check the forecast before I go outside.',
+                        examples: [
+                            { en: 'I always check the forecast before I go outside.', ko: '나가기 전에 항상 예보를 확인한다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 예보 - 과거 경험',
+                        en: 'One time the forecast showed rain all week.',
+                        examples: [
+                            { en: 'One time the forecast showed rain all week.', ko: '한 번 예보에 일주일 내내 비가 온다고 나왔다' }
+                        ]
+                    },
+                    {
+                        kr: '날씨 예보 - 비교',
+                        en: "But these days, it suddenly rains cats and dogs, right?",
+                        examples: [
+                            { en: "But these days, I check the weather forecast a lot. You know, now a days, it suddenly rains cats and dogs right?", ko: '요즘엔 날씨 예보를 자주 확인한다. 알지, 요즘엔 갑자기 폭우가 오잖아' }
+                        ]
+                    },
+                    {
+                        kr: '눈보라 - 묘사',
+                        en: 'Sometimes we have a blizzard in the winter.',
+                        examples: [
+                            { en: 'Sometimes we have a blizzard in the winter.', ko: '겨울에 가끔 눈보라가 난다' }
+                        ]
+                    },
+                    {
+                        kr: '눈보라 - 습관',
+                        en: 'I stay home when there is a blizzard.',
+                        examples: [
+                            { en: 'I stay home when there is a blizzard.', ko: '눈보라가 오면 집에 있다' }
+                        ]
+                    },
+                    {
+                        kr: '눈보라 - 과거 경험',
+                        en: 'One time a blizzard stopped the buses in my city.',
+                        examples: [
+                            { en: 'One time a blizzard stopped the buses in my city.', ko: '한 번 눈보라 때문에 우리 도시의 버스가 멈췄다' }
+                        ]
+                    },
+                    {
+                        kr: '눈보라 - 비교',
+                        en: "But these days, I see a lot of blizzards because of global warming.",
+                        examples: [
+                            { en: "But these days, I see a lot of blizzards. Because of global warming.", ko: '요즘엔 눈보라를 많이 본다. 지구 온난화 때문이다' }
+                        ]
+                    },
+                    {
+                        kr: '미세먼지 - 묘사',
+                        en: 'Fine dust is a big problem in my country.',
+                        examples: [
+                            { en: 'Fine dust is a big problem in my country.', ko: '미세먼지는 우리나라의 큰 문제다' }
+                        ]
+                    },
+                    {
+                        kr: '미세먼지 - 습관',
+                        en: "I wear a mask when there's a lot of fine dust.",
+                        examples: [
+                            { en: "I wear a mask when there's a lot of fine dust.", ko: '미세먼지가 많을 때 마스크를 쓴다' }
+                        ]
+                    },
+                    {
+                        kr: '미세먼지 - 과거 경험',
+                        en: 'One time I canceled plans because of fine dust.',
+                        examples: [
+                            { en: 'One time I canceled plans because of fine dust.', ko: '한 번 미세먼지 때문에 계획을 취소했다' }
+                        ]
+                    },
+                    {
+                        kr: '미세먼지 - 비교',
+                        en: 'But these days, I wear a mask because of fine dust.',
+                        examples: [
+                            { en: 'But these days, I wear a mask because of fine dust.', ko: '요즘엔 미세먼지 때문에 마스크를 쓴다' }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        let currentPatternCategory = 'all';
+        let currentMemoryCategory = 'greeting';
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (tabName === 'patterns' && !document.getElementById('patternsContainer').dataset.loaded) {
+                renderPatterns('all');
+                document.getElementById('patternsContainer').dataset.loaded = '1';
+            }
+            if (tabName === 'memory' && !document.getElementById('memoryCardsContainer').dataset.loaded) {
+                loadMemoryCards('greeting');
+                document.getElementById('memoryCardsContainer').dataset.loaded = '1';
+            }
+            if (tabName === 'overview') renderOverview();
+        }
+
+        function buildFilterButtons(containerId, onClickFn, includeAll) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            if (includeAll) {
+                const allBtn = document.createElement('button');
+                allBtn.className = 'filter-btn active';
+                allBtn.textContent = '전체';
+                allBtn.onclick = function(e) { onClickFn('all', e); };
+                container.appendChild(allBtn);
+            }
+            categories.forEach((cat, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn' + (!includeAll && idx === 0 ? ' active' : '');
+                btn.textContent = cat.label;
+                btn.onclick = function(e) { onClickFn(cat.key, e); };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderPatterns(categoryKey, evt) {
+            currentPatternCategory = categoryKey;
+            const container = document.getElementById('patternsContainer');
+            container.innerHTML = '';
+
+            const keysToRender = categoryKey === 'all' ? categories.map(c => c.key) : [categoryKey];
+
+            keysToRender.forEach(key => {
+                const group = roleplayData[key];
+                const section = document.createElement('div');
+                section.style.marginBottom = '28px';
+
+                const titleEl = document.createElement('div');
+                titleEl.style.cssText = 'font-size:1.1em;font-weight:800;color:var(--primary-dark);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #eef2ff;';
+                titleEl.textContent = group.title;
+                section.appendChild(titleEl);
+
+                group.items.forEach((item, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'pattern-card';
+
+                    const krEl = document.createElement('div');
+                    krEl.className = 'pattern-kr';
+                    krEl.textContent = item.kr;
+                    card.appendChild(krEl);
+
+                    const enEl = document.createElement('div');
+                    enEl.className = 'pattern-en';
+                    enEl.textContent = item.en;
+                    card.appendChild(enEl);
+
+                    const exList = document.createElement('div');
+                    exList.className = 'example-list';
+                    item.examples.forEach(ex => {
+                        const exItem = document.createElement('div');
+                        exItem.className = 'example-item';
+                        exItem.innerHTML = `<div class="example-en">${ex.en}</div><div class="example-ko">${ex.ko}</div>`;
+                        exList.appendChild(exItem);
+                    });
+                    card.appendChild(exList);
+
+                    section.appendChild(card);
+                });
+
+                container.appendChild(section);
+            });
+
+            document.querySelectorAll('#patternFilter .filter-btn').forEach(b => b.classList.remove('active'));
+            if (evt) evt.target.classList.add('active');
+        }
+
+        function loadMemoryCards(categoryKey, evt) {
+            currentMemoryCategory = categoryKey;
+            const container = document.getElementById('memoryCardsContainer');
+            container.innerHTML = '';
+
+            const group = roleplayData[categoryKey];
+            group.items.forEach((item, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'flip-card korean';
+                cardDiv.dataset.index = index;
+                cardDiv.onclick = function() { toggleCard(this); };
+                cardDiv.innerHTML = `<div class="flip-text">${item.kr}<div class="flip-hint">클릭하여 영어 패턴 보기 →</div></div>`;
+                container.appendChild(cardDiv);
+            });
+
+            document.querySelectorAll('#memoryFilter .filter-btn').forEach(b => b.classList.remove('active'));
+            if (evt) evt.target.classList.add('active');
+        }
+
+        function toggleCard(cardElement) {
+            const index = parseInt(cardElement.dataset.index, 10);
+            const item = roleplayData[currentMemoryCategory].items[index];
+
+            if (cardElement.classList.contains('korean')) {
+                cardElement.classList.remove('korean');
+                cardElement.classList.add('english');
+                cardElement.innerHTML = `<div class="flip-text">${item.en}<div class="flip-hint">← 클릭하여 숨기기</div></div>`;
+            } else {
+                cardElement.classList.remove('english');
+                cardElement.classList.add('korean');
+                cardElement.innerHTML = `<div class="flip-text">${item.kr}<div class="flip-hint">클릭하여 영어 패턴 보기 →</div></div>`;
+            }
+        }
+
+        function renderOverview() {
+            const container = document.getElementById('overviewContainer');
+            container.innerHTML = '';
+
+            categories.forEach(cat => {
+                const group = roleplayData[cat.key];
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'overview-group';
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'overview-title';
+                titleEl.textContent = group.title;
+                groupDiv.appendChild(titleEl);
+
+                group.items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'overview-item';
+                    let html = `<div class="overview-pattern">${item.kr}<br><span style="color:var(--primary); font-weight:700;">${item.en}</span></div>`;
+                    item.examples.forEach(ex => {
+                        html += `<div class="overview-ex">${ex.en}</div><div class="overview-ex-ko">${ex.ko}</div>`;
+                    });
+                    itemDiv.innerHTML = html;
+                    groupDiv.appendChild(itemDiv);
+                });
+
+                container.appendChild(groupDiv);
+            });
+        }
+
+        window.onload = function() {
+            buildFilterButtons('patternFilter', renderPatterns, true);
+            buildFilterButtons('memoryFilter', loadMemoryCards, false);
+            renderPatterns('all');
+            document.getElementById('patternsContainer').dataset.loaded = '1';
+        };
+    </script>
+</body>
+</html>

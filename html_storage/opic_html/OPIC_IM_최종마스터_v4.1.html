@@ -105,6 +105,32 @@
             display: block;
         }
 
+        .stt-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+        .stt-search { flex: 1 1 280px; min-width: 220px; padding: 11px 14px; border: 1px solid var(--border); border-radius: 8px; font: inherit; }
+        .stt-status { color: var(--text-muted); font-size: 0.9em; font-weight: 700; }
+        .stt-category { margin: 24px 0; }
+        .stt-category-title { color: var(--primary-dark); font-size: 1.12em; font-weight: 800; margin-bottom: 10px; }
+        .stt-list { display: grid; gap: 8px; }
+        .stt-item { background: #f8fafc; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 12px 14px; cursor: pointer; }
+        .stt-item:hover { background: #eff6ff; border-color: var(--primary-light); }
+        .stt-number { display: inline-block; min-width: 28px; color: var(--primary); font-weight: 800; }
+        .stt-meaning { display: none; color: var(--text-muted); font-size: 0.88em; margin-top: 6px; }
+        .stt-item.revealed .stt-meaning { display: block; }
+
+        .survey-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .survey-filter.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .survey-topic { margin-top: 24px; }
+        .survey-topic-title { color: var(--primary-dark); font-size: 1.25em; font-weight: 800; margin-bottom: 12px; }
+        .survey-type { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; margin: 12px 0; overflow: hidden; }
+        .survey-type-title { padding: 10px 14px; background: #eef2ff; color: var(--primary-dark); font-weight: 800; }
+        .survey-expression { padding: 13px 15px; border-top: 1px solid var(--border); cursor: pointer; }
+        .survey-expression:hover { background: #eff6ff; }
+        .survey-expression-english { font-weight: 700; line-height: 1.65; }
+        .survey-expression-question { color: #92400e; font-size: 0.86em; font-weight: 700; margin-bottom: 5px; }
+        .survey-expression-korean { display: none; color: var(--text-muted); font-size: 0.9em; margin-top: 6px; }
+        .survey-expression.revealed .survey-expression-korean { display: block; }
+        .survey-question { color: #92400e; background: #fffbeb; border-left: 4px solid var(--warning); padding: 12px 14px; margin-bottom: 18px; line-height: 1.65; }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -363,6 +389,8 @@
         <button class="tab-btn" onclick="switchTab('fillers')">💫 필러/연결</button>
         <button class="tab-btn" onclick="switchTab('memory')">🧠 토글식 암기</button>
         <button class="tab-btn" onclick="switchTab('expressions')">💬 전체 표현</button>
+        <button class="tab-btn" onclick="switchTab('stt-memory')">📚 STT 150문장</button>
+        <button class="tab-btn" onclick="switchTab('survey-memory')">📂 서베이 분류</button>
         <button class="tab-btn" onclick="switchTab('qna')">❓ 실전 Q&A</button>
     </div>
 
@@ -572,7 +600,32 @@
             </div>
         </div>
 
-        <!-- 8. 실전 Q&A -->
+        <!-- 8. STT 전체 문장 -->
+        <div id="stt-memory" class="tab-pane">
+            <div class="card">
+                <div class="card-title">📚 서베이 선택주제 STT 암기문장</div>
+                <div class="alert alert-info">원문의 5회 반복을 제거한 고유 문장입니다. 문장을 클릭하면 암기용 안내를 표시할 수 있습니다. 검색창으로 영어 표현을 찾으세요.</div>
+                <div class="stt-toolbar">
+                    <input id="sttSearch" class="stt-search" type="search" placeholder="영어 문장 검색" oninput="filterSttSentences(this.value)">
+                    <span id="sttStatus" class="stt-status">원문 불러오는 중...</span>
+                </div>
+                <div id="sttSentenceContainer"></div>
+            </div>
+        </div>
+
+        <!-- 9. 서베이 문장 분류 -->
+        <div id="survey-memory" class="tab-pane">
+            <div class="card">
+                <div class="card-title">📂 서베이 주제별 암기 표현</div>
+                <div class="alert alert-info">각 주제를 <strong>묘사 / 습관 / 과거경험 / 비교</strong>로 나눴습니다. 영어 문장을 클릭하면 한국어 뜻이 나타납니다.</div>
+                <div id="surveyTopicFilters" class="survey-toolbar"></div>
+                <div id="surveyTypeFilters" class="survey-toolbar"></div>
+                <div id="surveyQuestionGuide"></div>
+                <div id="surveyExpressionContainer"></div>
+            </div>
+        </div>
+
+        <!-- 10. 실전 Q&A -->
         <div id="qna" class="tab-pane">
             <div class="card">
                 <div class="card-title">❓ 실전 예시 Q&A</div>
@@ -615,6 +668,7 @@
             if (tabName === 'fillers') renderFillers('all');
             if (tabName === 'memory') loadMemoryCards('activity');
             if (tabName === 'expressions') renderAllExpressions();
+            if (tabName === 'survey-memory') renderSurveyExpressions();
         }
 
         const fillersData = {
@@ -837,9 +891,146 @@
             });
         }
 
+        const sttSentences = ["I like my neighborhood because it's a quiet and convenient place to live.", "I live in an apartment complex near the downtown area.", "Although it's close to downtown, my town is pretty quiet.", "I use public transportation to get around.", "The only neighbor I talk to is Mr. Lee, who lives upstairs.", "We run into each other about once a week.", "We usually have a conversation when we both get into the elevator.", "Sometimes they meet up with their friends and chat for a while at a coffee shop or go shopping together.", "She played it for five straight hours and I couldn't stand it.", "I called the building superintendent and complained about it.", "It is still in good condition.", "My mom put some paintings in the living room.", "When I first moved into my house, everything was brand new.", "First of all, I bought a new refrigerator.", "The old one broke down and made a weird sound.", "The new one is a lot bigger than the old one, so we can put more stuff inside.", "My new bed is really big and takes up a lot of space.", "My apartment is small and cozy.", "I hope I could get a top floor apartment so that nobody lives above me.", "When it gets really cold in Korea, the water pipes can freeze.", "In my house, there is a huge sofa in the middle of the living room.", "When I'm at home, I spend most of my time on the sofa.", "In my room, I have a desk, a bed, and a closet.", "My closet is pretty big because I share it with my sister.", "In the kitchen, there is a big dining table where we have dinner together.", "It's a big closet with small drawers, so I store most of my wardrobe in it.", "There are so many useful home appliances.", "I always use the microwave to heat up my food and drinks.", "There are many smaller devices I like, such as the blender and the kettle.", "I use the blender every morning to make some apple juice.", "My favorite actor is Matt Damon.", "He actually becomes the character, and it's so believable.", "He studied for his undergraduate degree at Harvard, and he even writes scenarios.", "I usually go to the theater in my neighborhood.", "It's very big with lots of screenings, so I can always watch a movie whenever I want.", "At the theater, I get my tickets from the ticket booth.", "I never let my friend talk because it really distracts me.", "I check from the internet to see what's recently been released.", "I wanted to see the film because I had read quite good compliments on the movie.", "The actress Natalie Portman also won the best actress Oscar.", "My best friend Kim and I have the same taste in music.", "We usually go for a drink and share our feelings about the concert.", "I like to attend the concerts of my favorite singers.", "I like musicians who play hip hop and dance music.", "I may not be able to see them in person ever again in my life.", "I often go to classic concerts like symphony or piano recitals.", "Since then, I've become a huge fan of live concerts.", "At the concert hall, we saw many Korean musicians came to see Lady Gaga.", "She was actually really good at singing and the concert was amazing.", "Kim and I were so impressed and I definitely want to go see her again.", "When you walk through the gate, you can see a lot of trees and lawn.", "There is a small pond inside the park.", "When I go to the park, I usually take a walk first.", "It takes about 15 minutes to walk around the whole park, so I walk a few laps around the park.", "We have a nice conversation while walking back home.", "I lie down on the grass and read a book.", "I want to jog there, but end up just walking.", "We found a nice spot to sit and put a blanket on the grass.", "We spent the whole afternoon in the park.", "When I visited the park that I usually go to, I actually ran into my ex-girlfriend.", "You can make any kind of fried rice by adding whatever you want.", "To make it, you need a bowl of rice, an egg, and any ingredients you want to put in the rice.", "Stir-fry them until they look good.", "When it's ready, put an egg fried sunny-side on the top and enjoy your dish.", "They're easy to make, but the taste isn't guaranteed.", "The first time I cooked was when I made dinner for my family.", "I decided to make seafood pasta for the main dish.", "It was her first time to actually cook besides instant noodles.", "She Googled the recipe and bought every ingredient she needed.", "When she got home after the delivery, her brother told her how salty her chocolate was.", "My MP3 player is very small and light, but it contains thousands of songs I like.", "I like dance and hip-hop music the most because they cheer me up.", "Sometimes I listen to jazz and classical music before I go to bed.", "I love his music because he composes great melodies and lyrics.", "I just like the way he thinks and expresses himself.", "Most of his songs are very popular in Korea.", "I was so excited to have a portable music device.", "I always carried it with me and I was always listening to music.", "I could focus well with some background music.", "I don't need a companion to jog because I just like running and listening to music.", "I like to run on a treadmill.", "When I jog, I need a good pair of running shoes.", "I also put on some sunblock before I jog.", "I decided to jog because I was gaining weight.", "I wanted to lose some weight and I decided to jog.", "I jog because I want to keep in shape.", "I knew I'd be more tired if I skipped exercising.", "I turned around and ran back home, but I was already soaked in the heavy rain.", "I learned to check the weather before I go jogging.", "I go to a gym at least three times a week to work out.", "When I first started to work out, I was extremely tired.", "The main purpose of going to a gym is to stay fit.", "It was not easy to lose weight, so I never miss my workout.", "The gym I go to has a lot of exercise equipment.", "I often have difficulties because in order to do weight training properly.", "Without anyone spotting you, you might drop the dumbbell.", "At the gym, I first do stretch, so I won't get hurt during my workout.", "After I'm done with running, I do weight training to build up some muscles.", "I once won the race in the women's 100 m freestyle.", "I know all the strokes and my favorite stroke is freestyle.", "My mom signed me up for swimming lessons at a sports center.", "He actually was a really good swimmer and I learned from him a lot.", "I think of him as a great instructor, but I'm still a little scared of him.", "Indoor pools were boring, so I asked my parents to take me to the beach.", "My mom made me wear a life jacket.", "I got very tired and had no energy to swim, and of course I was pretty far from the shore.", "I started to drown and I was so scared.", "It was the scariest thing ever and since then, I don't really like to swim in the ocean.", "It's a used mountain bike with 24 gears.", "I usually go riding on my bike along the bank.", "I always wear my helmet when I ride my bike.", "My dad put two training wheels on the rear wheel so that I wouldn't fall down.", "Bicycles with four wheels don't go as fast as two-wheeled ones.", "He held my bike from the back until I could ride by myself.", "He showed me wounds he got from mountain biking.", "I decided to give it a try.", "Suddenly, a dog jumped in front of me and I had to slam on the brakes.", "I couldn't hear his owner calling out the dog's name.", "My first international trip was to Canada.", "I had traveled to many different spots in Korea, but it was my first time traveling overseas.", "I had made my first passport as well because it was our first family vacation outside Korea.", "I don't know why my dad chose Canada as our first destination.", "I always try to pack light when I travel.", "Having a heavy or big suitcase actually could be a big hassle.", "I also pack an emergency medical kit whenever I travel.", "I'd like to travel there because I want to see pyramids and other ancient buildings.", "I've always had an admiration for Egypt.", "When I get there, I would like to take pictures of the great ancient architecture.", "I love going to Jeju Island because I think it is the most beautiful island in Korea.", "A lot of movie and drama scenes were filmed there.", "Since it is an island, seafood there is extremely fresh and delicious.", "I would most likely go to Jeju Island for my domestic trip.", "I always bring at least one sweater to a trip, even if the place is hot.", "After packing clothes, I pack all the toiletries and cosmetics.", "The last things I pack are my passport, travel guide, and wallet.", "My passport is not necessary if I am traveling within my country.", "A travel guide is always useful, even if you know the place well.", "I would love to go to places I've been which I do not remember.", "I'm a college student majoring in economics.", "To talk about my personality, I'm easygoing.", "I also have a good sense of humor.", "Since I'm very outgoing, I like sports that I can do with other people.", "I'm a senior majoring in engineering. I'm a senior majoring in engineering. I'm a senior majoring in engineering.", "My dad is a businessman. My mom is a housewife.", "My sister got married last year and moved out.", "I've been working at a trading company for 3 years, and I'm in the sales department.", "My name is Park, and I'm in my mid-20s.", "My favorite singer and composer is JYP.", "I was a little overweight when I was a child.", "This is my last semester, so I'm currently looking for a job."];
+
+        const surveyExpressionData = [
+            { topic: '음악', type: '묘사', question: '좋아하는 음악이나 음악 취향을 묘사해 보세요.', english: "I've been really into band music lately. It has this drum tempo that I just love.", korean: '최근에 밴드 음악에 엄청 빠졌어요. 제가 정말 좋아하는 드럼 템포가 있어요.' },
+            { topic: '음악', type: '묘사', question: '음악 스트리밍 서비스나 음악을 듣는 방법을 말해 보세요.', english: 'I think music streaming services like YouTube Music are amazing. They let you access so much music anytime.', korean: '유튜브 뮤직 같은 음악 스트리밍 서비스는 정말 대단해요. 언제든 엄청난 양의 음악을 들을 수 있어요.' },
+            { topic: '음악', type: '묘사', question: '좋아하는 가수나 음악가를 설명해 보세요.', english: "Green Apple's music has such a unique style, especially its catchy melodies. I can't get them out of my head.", korean: '그린애플의 음악은 정말 독특한 스타일이에요. 특히 중독성 있는 멜로디가 머릿속에서 떠나지 않아요.' },
+            { topic: '음악', type: '묘사', question: '클래식 음악이나 발라드에 대해 어떻게 생각하나요?', english: "Classical music isn't really my thing, but I understand why some people think it's relaxing.", korean: '클래식 음악은 제 취향은 아니지만, 사람들이 왜 편안하다고 생각하는지는 이해해요.' },
+            { topic: '음악', type: '묘사', question: '발라드 음악의 느낌을 설명해 보세요.', english: 'Ballad music has this cool, laid-back feel that is perfect for a chill evening.', korean: '발라드는 편안하고 느긋한 느낌이 있어서 여유로운 저녁에 듣기 좋아요.' },
+            { topic: '음악', type: '습관', question: '유튜브에서 평소 어떤 음악을 듣나요?', english: "I enjoy listening to other people's playlists on YouTube. There are so many great ones, and it's nice when I don't feel like choosing the music myself.", korean: '유튜브에서 다른 사람들이 올린 플레이리스트를 듣는 걸 좋아해요. 음악을 고르기 귀찮을 때 특히 좋아요.' },
+            { topic: '음악', type: '습관', question: '운동할 때 어떤 음악을 듣나요?', english: 'My workout playlist is full of high-energy tracks. They really help keep me motivated.', korean: '운동 플레이리스트는 에너지 넘치는 곡들로 가득해요. 운동할 때 동기 부여가 돼요.' },
+            { topic: '음악', type: '습관', question: '옛날 노래를 듣는 습관이 있나요?', english: 'Sometimes, I just like to sit back and listen to old classics. They have a timeless quality, you know.', korean: '가끔 그냥 앉아서 옛날 명곡을 들어요. 시간이 지나도 변하지 않는 매력이 있어요.' },
+            { topic: '음악', type: '습관', question: '악기를 연주하나요?', english: "I'm learning to play the drums, and you know, it's harder than it looks, but so rewarding.", korean: '드럼을 배우고 있는데 생각보다 어렵지만 정말 보람 있어요.' },
+            { topic: '음악', type: '과거경험', question: '콘서트에 가본 경험을 말해 보세요.', english: "I've been to a few concerts, and the energy of the crowd was just amazing. It was unforgettable.", korean: '콘서트에 몇 번 가봤는데 관중의 에너지가 정말 대단했어요. 잊을 수 없었어요.' },
+            { topic: '음악', type: '과거경험', question: '음악을 듣고 특별히 공감했던 경험을 말해 보세요.', english: "Sometimes, a song's lyrics really resonate with you. It's like they mirror your own experiences.", korean: '가끔 노래 가사가 정말 공감될 때가 있어요. 내 경험을 그대로 비추는 것 같아요.' },
+            { topic: '음악', type: '과거경험', question: '최근에 좋아하는 가수의 앨범을 들어본 경험을 말해 보세요.', english: "Have you listened to Green Apple's latest album? His voice is so powerful, and it gives me chills every time.", korean: '그린애플의 최신 앨범을 들어봤어요? 목소리가 정말 강렬해서 들을 때마다 소름이 돋아요.' },
+            { topic: '음악', type: '과거경험', question: '좋아하는 음악가의 재능에 감탄했던 경험을 말해 보세요.', english: "I'm always impressed by how Green Apple produces his own music. It shows his incredible talent.", korean: '그린애플이 직접 음악을 만드는 걸 보면 늘 감탄해요. 엄청난 재능이 보여요.' },
+            { topic: '음악', type: '비교', question: '현재의 음악 감상 방식이 과거와 어떻게 다른가요?', english: 'These days, I can access countless songs instantly through music streaming services, unlike in the past.', korean: '요즘은 예전과 달리 음악 스트리밍 서비스로 수많은 곡을 바로 들을 수 있어요.' },
+            { topic: '여행', type: '과거경험', question: '최근에 해외여행을 다녀온 경험을 말해 보세요.', english: 'You know, when I went to Japan, those flower gardens just blew me away. I still think about going back.', korean: '일본에 갔을 때 꽃밭이 정말 인상적이었어요. 아직도 다시 갈 생각을 해요.' },
+            { topic: '여행', type: '과거경험', question: '일본 여행에서 기억에 남는 일을 말해 보세요.', english: 'I visited Japan a while back, and Tokyo was amazing. Trying authentic sushi there was unforgettable.', korean: '예전에 일본에 갔는데 도쿄가 정말 좋았어요. 현지 스시를 먹은 게 잊히지 않아요.' },
+            { topic: '여행', type: '과거경험', question: '해외에서 먹어 본 음식 경험을 말해 보세요.', english: "I tried Japan's street food three months ago, and let me tell you, it was incredible.", korean: '3개월 전에 일본 길거리 음식을 먹어 봤는데 정말 대단했어요.' },
+            { topic: '여행', type: '과거경험', question: '뉴욕 여행이 어땠는지 말해 보세요.', english: 'A lot of my friends are traveling to America, and after my trip to New York, I totally get why. It was amazing.', korean: '친구들이 미국 여행을 많이 가는데, 뉴욕에 다녀와 보니 왜 가는지 알겠더라고요. 정말 좋았어요.' },
+            { topic: '여행', type: '비교', question: '여행이 자신의 시야에 어떤 변화를 주었나요?', english: 'I love how traveling to different countries has opened my eyes to new cultures and lifestyles.', korean: '다른 나라를 여행하면서 새로운 문화와 생활방식에 눈을 뜨게 된 점이 좋아요.' },
+            { topic: '여행', type: '비교', question: '여행에서 무엇이 더 중요한지 비교해 보세요.', english: "It doesn't matter where you go but who you're with.", korean: '어디로 가는지보다 누구와 함께 가는지가 중요해요.' },
+            { topic: '여행', type: '과거경험', question: '여행 중 아쉬웠던 점을 말해 보세요.', english: 'I wish it had been less crowded.', korean: '사람이 조금 덜 많았으면 좋았을 텐데요.' },
+            { topic: '여행', type: '과거경험', question: '특별했던 여행지를 표현해 보세요.', english: "It was like nowhere I'd ever been before.", korean: '내가 지금까지 가본 곳과는 전혀 다른 곳 같았어요.' },
+            { topic: '공원', type: '묘사', question: '자주 가는 공원을 묘사해 보세요.', english: 'There are many big trees that provide lots of shade.', korean: '그곳에는 그늘을 많이 만들어 주는 큰 나무가 많아요.' },
+            { topic: '공원', type: '묘사', question: '공원에서 볼 수 있는 것을 설명해 보세요.', english: 'You will see nice trees and hedges as well as joggers and bikers.', korean: '멋진 나무와 생울타리뿐 아니라 조깅하는 사람과 자전거 타는 사람도 볼 수 있어요.' },
+            { topic: '공원', type: '습관', question: '공원에서 주로 무엇을 하나요?', english: 'I usually take a walk in the park and enjoy the scenery.', korean: '보통 공원에서 산책하며 풍경을 즐겨요.' },
+            { topic: '공원', type: '과거경험', question: '공원에 갔던 특별한 경험을 말해 보세요.', english: 'I enjoyed the magnificent nature and unique plants in Eunyeoul Park. The sunset was amazing, too. It was one of the most remarkable experiences I have ever had.', korean: '은여울 공원의 멋진 자연과 독특한 식물을 즐겼어요. 일몰도 정말 아름다웠고, 가장 기억에 남는 경험 중 하나였어요.' },
+            { topic: '집', type: '묘사', question: '현재 사는 집을 묘사해 보세요.', english: 'First of all, I live in an apartment with my parents.', korean: '우선 저는 부모님과 아파트에 살아요.' },
+            { topic: '집', type: '묘사', question: '집의 분위기와 구조를 설명해 보세요.', english: 'My place is bright and spacious, but it can get pretty drafty in the winter.', korean: '우리 집은 밝고 넓지만 겨울에는 외풍이 들어와 꽤 쌀쌀할 수 있어요.' },
+            { topic: '집', type: '묘사', question: '집의 방 구조를 설명해 보세요.', english: "There are four rooms: a living room, my parents' room, my older sister's room, and my room. The kitchen is connected to the living room, so it is super convenient to move around.", korean: '방은 네 개이고 주방이 거실과 연결되어 있어서 이동하기 정말 편리해요.' },
+            { topic: '집', type: '묘사', question: '집에서 가장 좋아하는 방을 설명해 보세요.', english: "What I really love about my home is my room. It is definitely my favorite area of the house. It isn't all that big, but it isn't all that small either. I have everything I need, such as a computer, lots of books, and a bed.", korean: '집에서 가장 좋아하는 곳은 제 방이에요. 크기는 적당하고 컴퓨터, 책, 침대 등 필요한 것이 다 있어요.' },
+            { topic: '집', type: '습관', question: '집에서 주로 어디에서 시간을 보내나요?', english: 'I usually spend most of my time in my room because it is comfortable and quiet.', korean: '편안하고 조용해서 보통 방에서 가장 많은 시간을 보내요.' },
+            { topic: '영화', type: '묘사', question: '좋아하는 영화를 설명해 보세요.', english: 'My favorite movie is What Is Your Name? I have seen it more than five times.', korean: '제가 가장 좋아하는 영화는 너의 이름은이에요. 다섯 번 넘게 봤어요.' },
+            { topic: '영화', type: '묘사', question: '좋아하는 영화의 특징을 설명해 보세요.', english: 'There is an unexpected twist in the plot. It is a thought-provoking movie, so the film has been really meaningful to me.', korean: '줄거리에 예상하지 못한 반전이 있어요. 생각할 거리를 주는 영화라서 저에게 의미가 있어요.' },
+            { topic: '영화', type: '과거경험', question: '인상 깊었던 영화 감상 경험을 말해 보세요.', english: 'I have seen that movie more than five times, and every time I notice something new in the plot.', korean: '그 영화를 다섯 번 넘게 봤는데 볼 때마다 줄거리에서 새로운 것을 발견해요.' },
+            { topic: '영화', type: '비교', question: '어렸을 때와 현재의 영화 산업을 비교해 보세요.', english: 'I want to talk about the Korean movie industry. It has developed a lot since I was a child. Even though there were many great films back then, only a few became popular abroad. Now, many things have changed, and the Korean entertainment industry has become very popular. I am really proud of that.', korean: '한국 영화 산업은 제가 어렸을 때보다 많이 발전했어요. 이제는 해외에서도 인기가 많아져서 정말 자랑스러워요.' },
+            { topic: '카페', type: '묘사', question: '좋아하는 카페와 자주 마시는 음료를 설명해 보세요.', english: "I'm a coffee person. I usually prefer to order an iced Americano because it tastes really good. What I really love is Mega Coffee, a Korean franchise cafe.", korean: '저는 커피를 좋아하는 사람이라 아이스 아메리카노를 주로 주문해요. 메가커피라는 한국 프랜차이즈 카페를 좋아해요.' },
+            { topic: '카페', type: '묘사', question: '좋아하는 카페의 장점을 설명해 보세요.', english: 'I can choose different types of milk, such as soy milk or low-fat milk, and it is also very cheap. So it is really useful for me.', korean: '두유나 저지방 우유 등 여러 종류의 우유를 고를 수 있고 가격도 저렴해서 좋아요.' },
+            { topic: '카페', type: '습관', question: '카페에서 주로 무엇을 하나요?', english: 'Whenever I go to Mega Coffee, I usually go with my friends. We enjoy talking about recent news and catching up.', korean: '메가커피에 갈 때는 보통 친구들과 가서 최근 뉴스에 대해 이야기하고 근황을 나눠요.' },
+            { topic: '집에서 보내는 휴가', type: '습관', question: '여행을 가지 않을 때 휴가를 어떻게 보내나요?', english: "If I'm not able to travel somewhere for a vacation, I usually stay at home and have a staycation.", korean: '휴가 때 여행을 갈 수 없으면 보통 집에 머물며 스테이케이션을 해요.' },
+            { topic: '집에서 보내는 휴가', type: '묘사', question: '호캉스에 대해 설명해 보세요.', english: 'Hocance is a Korean word for the trend of enjoying a vacation in a hotel. It helps me relax and reduce my stress.', korean: '호캉스는 호텔에서 휴가를 즐기는 한국식 표현이에요. 긴장을 풀고 스트레스를 줄이는 데 도움이 돼요.' },
+            { topic: '집안일', type: '묘사', question: '평소 어떤 집안일을 하나요?', english: 'I like to do housework, especially when I get stressed. It is a great way to take my mind off my problems.', korean: '스트레스를 받을 때 특히 집안일을 좋아해요. 문제를 잠시 잊는 좋은 방법이에요.' },
+            { topic: '집안일', type: '습관', question: '집안일 루틴을 설명해 보세요.', english: 'I vacuum and mop the floor every day. I have long hair, and there is so much hair everywhere in my house, which is annoying. That is why I do housework.', korean: '매일 바닥을 청소기로 청소하고 걸레질해요. 머리카락이 많이 떨어져서 집안일을 해요.' },
+            { topic: '집안일', type: '습관', question: '가족이 맡은 집안일을 설명해 보세요.', english: 'I walk my dog and feed her in the morning. My mom prepares dinner, and my dad is responsible for recycling. He sorts the recycling at home and takes it out once a week.', korean: '저는 아침에 강아지를 산책시키고 밥을 줘요. 엄마는 저녁을 준비하고 아빠는 재활용을 담당해요.' },
+            { topic: '집안일', type: '과거경험', question: '하기 어려웠던 집안일 경험을 말해 보세요.', english: 'The worst thing would be cleaning the bathroom. Last weekend, I found some mold on the bathroom tiles. I had not noticed it because it was hidden in the corner.', korean: '가장 힘든 집안일은 욕실 청소예요. 지난 주말 욕실 타일에서 곰팡이를 발견했는데 구석에 숨어 있어서 몰랐어요.' },
+            { topic: '집안일', type: '과거경험', question: '집안일 문제를 어떻게 해결했나요?', english: "I didn't feel like touching it myself, so I asked my dad to remove the mold. He used a mold killer and cleaned the whole bathroom. It was a terrible experience.", korean: '직접 만지고 싶지 않아서 아빠에게 곰팡이를 제거해 달라고 했어요. 아빠가 곰팡이 제거제를 사용해 욕실 전체를 청소했어요.' }
+        ];
+
+        let selectedSurveyTopic = '전체';
+        let selectedSurveyType = '전체';
+
+        function renderSurveyFilters() {
+            const topics = ['전체', ...new Set(surveyExpressionData.map(item => item.topic))];
+            const types = ['전체', '묘사', '습관', '과거경험', '비교'];
+            document.getElementById('surveyTopicFilters').innerHTML = topics.map(topic => `<button class="filter-btn survey-filter ${topic === selectedSurveyTopic ? 'active' : ''}" onclick="selectSurveyTopic('${topic}')">${topic}</button>`).join('');
+            document.getElementById('surveyTypeFilters').innerHTML = types.map(type => `<button class="filter-btn survey-filter ${type === selectedSurveyType ? 'active' : ''}" onclick="selectSurveyType('${type}')">${type}</button>`).join('');
+        }
+
+        function selectSurveyTopic(topic) {
+            selectedSurveyTopic = topic;
+            renderSurveyExpressions();
+        }
+
+        function selectSurveyType(type) {
+            selectedSurveyType = type;
+            renderSurveyExpressions();
+        }
+
+        function renderSurveyExpressions() {
+            renderSurveyFilters();
+            const container = document.getElementById('surveyExpressionContainer');
+            if (!container) return;
+            const filtered = surveyExpressionData.filter(item => (selectedSurveyTopic === '전체' || item.topic === selectedSurveyTopic) && (selectedSurveyType === '전체' || item.type === selectedSurveyType));
+            const grouped = {};
+            filtered.forEach(item => {
+                if (!grouped[item.topic]) grouped[item.topic] = {};
+                if (!grouped[item.topic][item.type]) grouped[item.topic][item.type] = [];
+                grouped[item.topic][item.type].push(item);
+            });
+            document.getElementById('surveyQuestionGuide').innerHTML = '<div class="survey-question"><strong>문제 흐름:</strong> 보통 주제 묘사 → 평소 습관 → 과거 경험 → 예전과 현재 비교 순서로 이어질 수 있습니다. 질문 유형에 맞는 묶음만 골라 암기하세요.</div>';
+            container.innerHTML = Object.entries(grouped).map(([topic, typeGroups]) => `<section class="survey-topic"><div class="survey-topic-title">${topic}</div>${Object.entries(typeGroups).map(([type, items]) => `<div class="survey-type"><div class="survey-type-title">${type} (${items.length})</div>${items.map(item => `<div class="survey-expression" onclick="this.classList.toggle('revealed')"><div class="survey-expression-question">Q. ${item.question}</div><div class="survey-expression-english">${item.english}</div><div class="survey-expression-korean">${item.korean}</div></div>`).join('')}</div>`).join('')}</section>`).join('');
+        }
+
+        function extractSttSentences(text) {
+            const blocks = text.split(/^(?:One|Two|Three|Four|Five|Six|Seven|Eight|Nine|10)\.\s*$/m);
+            const extracted = [];
+            blocks.forEach(block => {
+                const cleaned = block.replace(/\[[^\]]+\]/g, ' ').replace(/^(?:One|Two|Three|Four|Five|Six|Seven|Eight|Nine|10)\.\s*$/gm, ' ');
+                const tokens = cleaned.match(/\S+/g) || [];
+                if (tokens.length && tokens.length % 5 === 0) {
+                    extracted.push(tokens.slice(0, tokens.length / 5).join(' '));
+                }
+            });
+            return [...new Set([...extracted, ...sttRecoveryExpressions])];
+        }
+
+        function renderSttSentences(query = '') {
+            const container = document.getElementById('sttSentenceContainer');
+            const normalizedQuery = query.trim().toLowerCase();
+            const filtered = sttSentences.filter(sentence => sentence.toLowerCase().includes(normalizedQuery));
+            container.innerHTML = '';
+
+            for (let groupIndex = 0; groupIndex < Math.ceil(sttSentences.length / 10); groupIndex++) {
+                const groupSentences = filtered.filter(sentence => {
+                    const originalIndex = sttSentences.indexOf(sentence);
+                    return originalIndex >= groupIndex * 10 && originalIndex < (groupIndex + 1) * 10;
+                });
+                if (!groupSentences.length) continue;
+                const section = document.createElement('section');
+                section.className = 'stt-category';
+                section.innerHTML = `<div class="stt-category-title">${sttTopics[groupIndex] || `STT 문장 ${groupIndex + 1}`} <span class="stt-status">(${groupSentences.length}개)</span></div>`;
+                const list = document.createElement('div');
+                list.className = 'stt-list';
+                groupSentences.forEach(sentence => {
+                    const item = document.createElement('div');
+                    item.className = 'stt-item';
+                    item.onclick = () => item.classList.toggle('revealed');
+                    item.innerHTML = `<span class="stt-number">${sttSentences.indexOf(sentence) + 1}</span>${sentence}<div class="stt-meaning">클릭해서 문장을 숨기거나 다시 확인하세요.</div>`;
+                    list.appendChild(item);
+                });
+                section.appendChild(list);
+                container.appendChild(section);
+            }
+            document.getElementById('sttStatus').textContent = `${filtered.length}개 표시 / 전체 ${sttSentences.length}개`;
+        }
+
+        function filterSttSentences(query) {
+            renderSttSentences(query);
+        }
+
+        function loadSttSentences() {
+            renderSttSentences();
+        }
+
         window.onload = function() {
             document.querySelectorAll('.tab-pane')[0].classList.add('active');
             document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            loadSttSentences();
         };
     </script>
 </body>
